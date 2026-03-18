@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { COLORS, BRAND } from '@/lib/design-tokens';
 
 export default function NutritionPage() {
   const toast = useToast();
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expandedMeals, setExpandedMeals] = useState({});
 
   useEffect(() => {
     apiFetch('/api/nutrition/plan')
@@ -15,6 +17,10 @@ export default function NutritionPage() {
       .catch(() => { toast.error('Error al cargar plan nutricional'); setPlan(null); })
       .finally(() => setLoading(false));
   }, []);
+
+  const toggleMeal = (idx) => {
+    setExpandedMeals(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
   if (loading) return <div className="text-gray-400 text-center py-12">Cargando...</div>;
 
@@ -39,7 +45,7 @@ export default function NutritionPage() {
     );
   }
 
-  const goalLabels = { lose_weight: 'Perder Peso', gain_muscle: 'Ganar Musculo', get_shredded: 'Definicion' };
+  const goalLabels = COLORS.goal;
 
   return (
     <div>
@@ -53,15 +59,15 @@ export default function NutritionPage() {
         </div>
         <div className="card text-center py-4">
           <div className="text-xs text-gray-400">Proteina</div>
-          <div className="text-2xl font-bold">{plan.protein_g}g</div>
+          <div className={`text-2xl font-bold ${COLORS.protein.text}`}>{plan.protein_g}g</div>
         </div>
         <div className="card text-center py-4">
           <div className="text-xs text-gray-400">Carbohidratos</div>
-          <div className="text-2xl font-bold">{plan.carbs_g}g</div>
+          <div className={`text-2xl font-bold ${COLORS.carbs.text}`}>{plan.carbs_g}g</div>
         </div>
         <div className="card text-center py-4">
           <div className="text-xs text-gray-400">Grasas</div>
-          <div className="text-2xl font-bold">{plan.fat_g}g</div>
+          <div className={`text-2xl font-bold ${COLORS.fat.text}`}>{plan.fat_g}g</div>
         </div>
       </div>
 
@@ -76,7 +82,9 @@ export default function NutritionPage() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Objetivo</span>
-            <span className="font-bold">{goalLabels[plan.goal] || plan.goal}</span>
+            <span className={`font-bold ${goalLabels[plan.goal]?.text || ''}`}>
+              {goalLabels[plan.goal]?.label || plan.goal}
+            </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">{plan.deficit_or_surplus > 0 ? 'Superavit' : 'Deficit'}</span>
@@ -101,9 +109,9 @@ export default function NutritionPage() {
         </div>
       </div>
 
-      {/* Meal Distribution */}
+      {/* Meal Distribution Table */}
       {plan.meal_distribution && (
-        <div className="card">
+        <div className="card mb-6">
           <h2 className="text-lg font-bold mb-4">Distribucion por Comida</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -133,9 +141,134 @@ export default function NutritionPage() {
           </div>
         </div>
       )}
+
+      {/* Meal Suggestions */}
+      {plan.meal_distribution && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-bold">Sugerencias de Alimentos</h2>
+          {plan.meal_distribution.map((meal, idx) => (
+            <MealSuggestionCard
+              key={idx}
+              meal={meal}
+              expanded={expandedMeals[idx] !== false}
+              onToggle={() => toggleMeal(idx)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
+// ─── Meal Suggestion Card ─────────────────────────────────────────────────
+
+function MealSuggestionCard({ meal, expanded, onToggle }) {
+  const suggestions = meal.suggestions || [];
+  const totals = meal.suggestion_totals;
+  const matchPct = meal.match_pct;
+
+  if (suggestions.length === 0) return null;
+
+  return (
+    <div className="card overflow-hidden">
+      {/* Header */}
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-1"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <MealIcon name={meal.name} />
+          </div>
+          <div className="text-left">
+            <h3 className="font-bold">{meal.name}</h3>
+            <p className="text-xs text-gray-400">{meal.calories} kcal objetivo</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {matchPct != null && (
+            <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
+              matchPct >= 95 ? 'bg-green-400/10 text-green-400' :
+              matchPct >= 85 ? 'bg-yellow-400/10 text-yellow-400' :
+              'bg-red-400/10 text-red-400'
+            }`}>
+              {matchPct}% match
+            </span>
+          )}
+          <svg
+            className={`w-5 h-5 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {/* Content */}
+      {expanded && (
+        <div className="mt-4 space-y-2">
+          {suggestions.map((s, i) => {
+            const catStyle = COLORS.foodCategory[s.category] || COLORS.foodCategory.Proteinas;
+            return (
+              <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${catStyle.bg} border ${catStyle.border}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${catStyle.dot}`} />
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{s.name}</p>
+                    <p className={`text-xs ${catStyle.text}`}>{s.display_amount}</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 text-xs text-gray-400 flex-shrink-0 ml-4">
+                  <span className="text-primary font-bold">{s.calories}</span>
+                  <span className={COLORS.protein.text}>{s.protein_g}p</span>
+                  <span className={COLORS.carbs.text}>{s.carbs_g}c</span>
+                  <span className={COLORS.fat.text}>{s.fat_g}g</span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Totals vs Target */}
+          {totals && (
+            <div className="mt-3 pt-3 border-t border-dark-500">
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">Sugerido</span>
+                <div className="flex gap-4 text-gray-400">
+                  <span className="text-primary font-bold">{totals.calories} cal</span>
+                  <span>{totals.protein_g}p</span>
+                  <span>{totals.carbs_g}c</span>
+                  <span>{totals.fat_g}g</span>
+                </div>
+              </div>
+              <div className="flex justify-between text-xs mt-1">
+                <span className="text-gray-500">Objetivo</span>
+                <div className="flex gap-4 text-gray-500">
+                  <span className="font-bold">{meal.calories} cal</span>
+                  <span>{meal.protein_g}p</span>
+                  <span>{meal.carbs_g}c</span>
+                  <span>{meal.fat_g}g</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Meal Icon ────────────────────────────────────────────────────────────
+
+function MealIcon({ name }) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('desayuno')) return <span className="text-lg">🌅</span>;
+  if (n.includes('almuerzo')) return <span className="text-lg">🍽️</span>;
+  if (n.includes('cena')) return <span className="text-lg">🌙</span>;
+  if (n.includes('snack')) return <span className="text-lg">🥤</span>;
+  return <span className="text-lg">🍴</span>;
+}
+
+// ─── Macro Bar ────────────────────────────────────────────────────────────
 
 function MacroBar({ protein, carbs, fat }) {
   const pCal = protein * 4;
@@ -151,19 +284,19 @@ function MacroBar({ protein, carbs, fat }) {
   return (
     <div>
       <div className="flex h-4 rounded-full overflow-hidden">
-        <div className="bg-primary" style={{ width: `${pPct}%` }} />
-        <div className="bg-cyan-400" style={{ width: `${cPct}%` }} />
-        <div className="bg-yellow-400" style={{ width: `${fPct}%` }} />
+        <div className={COLORS.protein.bg} style={{ width: `${pPct}%` }} />
+        <div className={COLORS.carbs.bg} style={{ width: `${cPct}%` }} />
+        <div className={COLORS.fat.bg} style={{ width: `${fPct}%` }} />
       </div>
       <div className="flex justify-between mt-2 text-xs text-gray-400">
         <span className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-primary inline-block" /> Proteina {Math.round(pPct)}%
+          <span className={`w-2 h-2 rounded-full ${COLORS.protein.bg} inline-block`} /> Proteina {Math.round(pPct)}%
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" /> Carbs {Math.round(cPct)}%
+          <span className={`w-2 h-2 rounded-full ${COLORS.carbs.bg} inline-block`} /> Carbs {Math.round(cPct)}%
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> Grasa {Math.round(fPct)}%
+          <span className={`w-2 h-2 rounded-full ${COLORS.fat.bg} inline-block`} /> Grasa {Math.round(fPct)}%
         </span>
       </div>
     </div>

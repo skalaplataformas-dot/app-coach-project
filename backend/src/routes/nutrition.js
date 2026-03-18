@@ -2,6 +2,7 @@ import { Router } from 'express';
 import supabase from '../config/supabase.js';
 import { requireAuth } from '../middleware/auth.js';
 import { generateNutritionPlan } from '../utils/nutrition-plan.js';
+import { generateMealSuggestions } from '../utils/meal-suggestions.js';
 import { strictLimiter } from '../middleware/rateLimiter.js';
 import { validateNutritionPlan } from '../middleware/validate.js';
 
@@ -25,6 +26,11 @@ router.post('/plan', requireAuth, strictLimiter, ...validateNutritionPlan, async
       deficitLevel: deficit_level || 'moderate',
     });
 
+    // Fetch foods and generate meal suggestions
+    const { data: foods } = await supabase.from('foods').select('*');
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const enrichedMeals = generateMealSuggestions(plan.mealDistribution, foods || [], dayOfYear);
+
     // Save to database
     const { data, error } = await supabase
       .from('nutrition_plans')
@@ -37,7 +43,7 @@ router.post('/plan', requireAuth, strictLimiter, ...validateNutritionPlan, async
         fat_g: plan.fat,
         deficit_or_surplus: plan.deficitOrSurplus,
         meals_per_day: Number(meals_per_day),
-        meal_distribution: plan.mealDistribution,
+        meal_distribution: enrichedMeals,
         timeline_days: plan.timelineDays,
         projected_change_kg: plan.projectedChangeKg,
       })
@@ -45,6 +51,16 @@ router.post('/plan', requireAuth, strictLimiter, ...validateNutritionPlan, async
       .single();
 
     if (error) throw error;
+
+    // Cleanup: delete old plans, keep only the latest one
+    supabase
+      .from('nutrition_plans')
+      .delete()
+      .eq('user_id', req.user.id)
+      .neq('id', data.id)
+      .then(() => {})
+      .catch(() => {});
+
     res.status(201).json(data);
   } catch (err) {
     next(err);
