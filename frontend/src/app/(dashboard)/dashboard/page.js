@@ -77,7 +77,7 @@ export default function DashboardPage() {
               <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <h2 className="text-lg font-bold">Bienvenido a App Coach</h2>
+              <h2 className="text-lg font-bold">Bienvenido a FitBro</h2>
             </div>
             <p className="text-sm text-gray-400 mb-4">
               Comienza calculando tu perfil metabolico para obtener un plan personalizado de nutricion y entrenamiento.

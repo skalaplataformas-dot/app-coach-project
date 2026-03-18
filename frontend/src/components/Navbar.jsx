@@ -43,7 +43,7 @@ export default function Navbar() {
       {/* Left side: Mobile title + Desktop breadcrumb */}
       <div className="flex items-center gap-3">
         <h1 className="text-lg font-bold md:hidden">
-          <span className="text-primary">App</span> Coach
+          <span className="text-primary">Fit</span>Bro
         </h1>
 
         {/* Breadcrumb - desktop only */}

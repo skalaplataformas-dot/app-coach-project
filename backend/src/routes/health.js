@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    service: 'App Coach Backend',
+    service: 'FitBro Backend',
   });
 });
 

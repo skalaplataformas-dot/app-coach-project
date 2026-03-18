@@ -2,7 +2,7 @@ import './globals.css';
 import Providers from '@/components/Providers';
 
 export const metadata = {
-  title: 'App Coach - Tu entrenador personal',
+  title: 'FitBro - Tu coach de fitness inteligente',
   description: 'Plataforma de coaching fitness con planes personalizados',
 };
 
