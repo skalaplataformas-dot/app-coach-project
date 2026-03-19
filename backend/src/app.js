@@ -10,6 +10,7 @@ import nutritionRoutes from './routes/nutrition.js';
 import foodRoutes from './routes/foods.js';
 import onboardingRoutes from './routes/onboarding.js';
 import adminRoutes from './routes/admin.js';
+import messageRoutes from './routes/messages.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 
@@ -41,6 +42,7 @@ app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/foods', foodRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/messages', messageRoutes);
 
 // ─── Error handler ───────────────────────────────────────────────────────
 app.use(errorHandler);
