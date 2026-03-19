@@ -30,7 +30,9 @@ export default function ProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const updated = await apiFetch('/api/users/me', { method: 'PUT', body: profile });
+      // Only send editable fields, exclude read-only data
+      const { id, created_at, updated_at, role, metabolic_result, last_active_at, deactivated_at, ...editable } = profile;
+      const updated = await apiFetch('/api/users/me', { method: 'PUT', body: editable });
       setProfile(updated);
       toast.success(TOASTS.profile_updated);
     } catch (err) {
@@ -47,7 +49,8 @@ export default function ProfilePage() {
     setRecalculating(true);
     try {
       // 1. Save current profile first
-      await apiFetch('/api/users/me', { method: 'PUT', body: profile });
+      const { id: _id, created_at: _ca, updated_at: _ua, role: _r, metabolic_result: _mr, last_active_at: _la, deactivated_at: _da, ...editableFields } = profile;
+      await apiFetch('/api/users/me', { method: 'PUT', body: editableFields });
 
       // 2. Calculate metabolic data
       const metabolicResult = await apiFetch('/api/metabolic/calculate', {

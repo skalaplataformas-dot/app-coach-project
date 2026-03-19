@@ -47,6 +47,8 @@ router.put('/me', requireAuth, ...validateProfile, async (req, res, next) => {
       'sleep_hours', 'water_liters', 'stress_level', 'alcohol_frequency', 'smoking',
       // Photos
       'photo_front', 'photo_side', 'photo_back',
+      // Preferences
+      'preferred_foods',
     ];
 
     // Map frontend keys to DB column names
