@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 
 const GOAL_LABELS = { lose_weight: 'Perder Peso', gain_muscle: 'Ganar Músculo', get_shredded: 'Definición' };
 const DIET_LABELS = { standard: 'Estándar', keto: 'Keto', vegetarian: 'Vegetariano', vegan: 'Vegano', paleo: 'Paleo' };
@@ -17,7 +18,7 @@ export default function ProfilePage() {
   useEffect(() => {
     apiFetch('/api/users/me')
       .then(setProfile)
-      .catch(() => toast.error('Error al cargar perfil'))
+      .catch(() => toast.error(TOASTS.error_profile))
       .finally(() => setLoading(false));
   }, []);
 
@@ -31,16 +32,16 @@ export default function ProfilePage() {
     try {
       const updated = await apiFetch('/api/users/me', { method: 'PUT', body: profile });
       setProfile(updated);
-      toast.success('Perfil actualizado');
+      toast.success(TOASTS.profile_updated);
     } catch (err) {
-      toast.error('Error al guardar');
+      toast.error(TOASTS.error_save);
     }
     setSaving(false);
   };
 
   const handleRecalculate = async () => {
     if (!profile.weight_kg || !profile.height_cm || !profile.age) {
-      toast.error('Completa peso, altura y edad primero');
+      toast.error(TOASTS.error_recalculate);
       return;
     }
     setRecalculating(true);
@@ -80,9 +81,9 @@ export default function ProfilePage() {
       // 4. Refresh profile to get new metabolic_result
       const refreshed = await apiFetch('/api/users/me');
       setProfile(refreshed);
-      toast.success('Metabolismo recalculado y plan actualizado');
+      toast.success(TOASTS.metabolic_recalculated);
     } catch (err) {
-      toast.error('Error al recalcular: ' + err.message);
+      toast.error(TOASTS.error_recalculate_detail(err.message));
     }
     setRecalculating(false);
   };

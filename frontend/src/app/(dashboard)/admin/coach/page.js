@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 import Link from 'next/link';
 
 const GOAL_BADGES = {
@@ -28,7 +29,7 @@ export default function CoachDashboardPage() {
   useEffect(() => {
     apiFetch('/api/coach/users')
       .then(setUsers)
-      .catch(() => toast.error('Error al cargar asesorados'))
+      .catch(() => toast.error(TOASTS.error_coach_users))
       .finally(() => setLoading(false));
   }, []);
 

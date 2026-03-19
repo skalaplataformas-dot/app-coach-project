@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS, CONFIRMATIONS } from '@/config/coach-voice';
 
 export default function AdminFeedPage() {
   const toast = useToast();
@@ -17,7 +18,7 @@ export default function AdminFeedPage() {
   const fetchMessages = () => {
     apiFetch('/api/messages')
       .then(setMessages)
-      .catch(() => toast.error('Error al cargar mensajes'))
+      .catch(() => toast.error(TOASTS.error_messages))
       .finally(() => setLoading(false));
   };
 
@@ -33,13 +34,13 @@ export default function AdminFeedPage() {
           method: 'PUT',
           body: { title: title || null, content, pinned },
         });
-        toast.success('Mensaje actualizado');
+        toast.success(TOASTS.message_updated);
       } else {
         await apiFetch('/api/messages', {
           method: 'POST',
           body: { title: title || null, content, pinned },
         });
-        toast.success('Mensaje publicado');
+        toast.success(TOASTS.message_published);
       }
       setTitle('');
       setContent('');
@@ -47,7 +48,7 @@ export default function AdminFeedPage() {
       setEditingId(null);
       fetchMessages();
     } catch {
-      toast.error('Error al guardar mensaje');
+      toast.error(TOASTS.error_message_save);
     } finally {
       setSending(false);
     }
@@ -62,13 +63,13 @@ export default function AdminFeedPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este mensaje?')) return;
+    if (!confirm(CONFIRMATIONS.delete_message)) return;
     try {
       await apiFetch(`/api/messages/${id}`, { method: 'DELETE' });
-      toast.success('Mensaje eliminado');
+      toast.success(TOASTS.message_deleted);
       fetchMessages();
     } catch {
-      toast.error('Error al eliminar');
+      toast.error(TOASTS.error_message_delete);
     }
   };
 
@@ -80,7 +81,7 @@ export default function AdminFeedPage() {
       });
       fetchMessages();
     } catch {
-      toast.error('Error al actualizar');
+      toast.error(TOASTS.error_message_update);
     }
   };
 

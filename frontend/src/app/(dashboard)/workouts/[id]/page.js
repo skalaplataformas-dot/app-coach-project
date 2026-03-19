@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 
 const DIFFICULTY_LABELS = { beginner: 'Principiante', intermediate: 'Intermedio', advanced: 'Avanzado' };
 const DIFFICULTY_COLORS = {
@@ -41,7 +42,7 @@ export default function WorkoutDetailPage() {
   useEffect(() => {
     apiFetch(`/api/workouts/${id}`)
       .then(setWorkout)
-      .catch(() => { toast.error('Error al cargar el entrenamiento'); })
+      .catch(() => { toast.error(TOASTS.error_workout_detail); })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -49,10 +50,10 @@ export default function WorkoutDetailPage() {
     setCompleting(true);
     try {
       await apiFetch(`/api/workouts/${id}/complete`, { method: 'POST', body: {} });
-      toast.success('Entrenamiento completado!');
+      toast.success(TOASTS.workout_completed);
       setWorkout(prev => ({ ...prev, last_completed: new Date().toISOString() }));
     } catch {
-      toast.error('Error al registrar entrenamiento');
+      toast.error(TOASTS.error_workout_log);
     } finally {
       setCompleting(false);
     }

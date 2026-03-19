@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 
 function timeAgo(dateStr) {
   const now = new Date();
@@ -29,7 +30,7 @@ export default function FeedPage() {
   useEffect(() => {
     apiFetch('/api/messages')
       .then(setMessages)
-      .catch(() => { toast.error('Error al cargar mensajes'); setMessages([]); })
+      .catch(() => { toast.error(TOASTS.error_messages); setMessages([]); })
       .finally(() => setLoading(false));
   }, []);
 

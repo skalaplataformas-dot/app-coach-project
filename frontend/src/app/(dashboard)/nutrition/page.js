@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 import { COLORS, BRAND } from '@/lib/design-tokens';
 
 export default function NutritionPage() {
@@ -14,7 +15,7 @@ export default function NutritionPage() {
   useEffect(() => {
     apiFetch('/api/nutrition/plan')
       .then(setPlan)
-      .catch(() => { toast.error('Error al cargar plan nutricional'); setPlan(null); })
+      .catch(() => { toast.error(TOASTS.error_nutrition); setPlan(null); })
       .finally(() => setLoading(false));
   }, []);
 

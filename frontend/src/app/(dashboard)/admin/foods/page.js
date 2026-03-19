@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS, CONFIRMATIONS } from '@/config/coach-voice';
 
 const CATEGORIES = ['Proteinas', 'Carbohidratos', 'Frutas', 'Grasas', 'Empacados'];
 
@@ -56,7 +57,7 @@ export default function AdminFoodsPage() {
       }
       setEditing(null);
       loadFoods();
-      toast.success(editing === 'new' ? 'Alimento creado' : 'Alimento actualizado');
+      toast.success(editing === 'new' ? TOASTS.food_created : TOASTS.food_updated);
     } catch (e) {
       toast.error(e.message);
     }
@@ -64,11 +65,11 @@ export default function AdminFoodsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Eliminar este alimento?')) return;
+    if (!confirm(CONFIRMATIONS.delete_food)) return;
     try {
       await apiFetch(`/api/foods/${id}`, { method: 'DELETE' });
       loadFoods();
-      toast.success('Alimento eliminado');
+      toast.success(TOASTS.food_deleted);
     } catch (e) {
       toast.error(e.message);
     }

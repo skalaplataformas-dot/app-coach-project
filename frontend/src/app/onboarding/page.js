@@ -245,25 +245,28 @@ const SECTION_ICONS = {
 // COACH MESSAGES
 // ═══════════════════════════════════════════════════════════════════════
 
+// Coach messages imported from centralized voice module
+import { ONBOARDING_COACH_TIPS, MOTIVATIONAL_SCREENS as MOTIV_TEXTS } from '@/config/coach-voice';
+
 const COACH_MESSAGES = {
-  bodyType: 'Conocer tu somatotipo nos ayuda a personalizar tu plan de entrenamiento y nutrición.',
-  sex: 'Los cálculos metabólicos varían significativamente entre hombres y mujeres.',
-  age: 'A partir de los 30, tu metabolismo basal disminuye ~2% por década. Por eso es clave este dato.',
-  height_cm: 'Tu altura junto con tu peso nos permite calcular tu IMC y composición corporal.',
-  weight_kg: 'Este es tu punto de partida. Cada cambio que logres será visible desde aquí.',
-  target_weight_kg: 'Un objetivo realista es perder 0.5-1kg por semana o ganar 0.25-0.5kg de músculo.',
-  neck_cm: 'La medida del cuello es clave en la fórmula Navy para estimar tu porcentaje de grasa.',
-  waist_cm: 'La circunferencia de cintura es el indicador #1 de salud metabólica según la OMS.',
-  activity_level: 'Tu nivel de actividad multiplica tu metabolismo basal para obtener tu gasto real diario.',
-  meals_per_day: 'No hay un número mágico. Lo importante es la consistencia y los macros totales del día.',
-  preferred_foods: 'Tus alimentos favoritos tendrán prioridad en tu plan nutricional personalizado.',
-  diet_type: 'Respetamos tu estilo alimentario. Tu plan se adaptará 100% a tu preferencia.',
-  photos: 'Las fotos son opcionales pero son la mejor forma de ver tu progreso real con el tiempo.',
-  medical_conditions: 'Tu salud es primero. Esta información nos ayuda a cuidarte mejor.',
-  sleep_hours: 'Dormir entre 7-9 horas puede mejorar tus resultados hasta un 40%.',
-  water_liters: 'La hidratación adecuada mejora el metabolismo y la recuperación muscular.',
-  stress_level: 'El estrés crónico eleva el cortisol y dificulta la pérdida de grasa.',
-  alcohol_frequency: 'El alcohol aporta 7 cal/g y dificulta la síntesis de proteínas.',
+  bodyType: ONBOARDING_COACH_TIPS.body_type,
+  sex: ONBOARDING_COACH_TIPS.sex,
+  age: ONBOARDING_COACH_TIPS.age,
+  height_cm: ONBOARDING_COACH_TIPS.height,
+  weight_kg: ONBOARDING_COACH_TIPS.weight,
+  target_weight_kg: ONBOARDING_COACH_TIPS.target_weight,
+  neck_cm: ONBOARDING_COACH_TIPS.neck,
+  waist_cm: ONBOARDING_COACH_TIPS.waist,
+  activity_level: ONBOARDING_COACH_TIPS.activity,
+  meals_per_day: ONBOARDING_COACH_TIPS.meals,
+  preferred_foods: ONBOARDING_COACH_TIPS.preferred_foods,
+  diet_type: ONBOARDING_COACH_TIPS.diet_type,
+  photos: ONBOARDING_COACH_TIPS.photos,
+  medical_conditions: ONBOARDING_COACH_TIPS.health,
+  sleep_hours: ONBOARDING_COACH_TIPS.sleep,
+  water_liters: ONBOARDING_COACH_TIPS.water,
+  stress_level: ONBOARDING_COACH_TIPS.stress,
+  alcohol_frequency: ONBOARDING_COACH_TIPS.alcohol,
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -273,32 +276,32 @@ const COACH_MESSAGES = {
 const MOTIVATIONAL_SCREENS = {
   after_goal: {
     lose_weight: {
-      Icon: Flame, title: '¡Vamos a lograrlo!',
-      message: 'Cada kilo que pierdas te acerca más a tu mejor versión. Te vamos a guiar en cada paso del camino.',
+      Icon: Flame, title: MOTIV_TEXTS.lose_weight.title,
+      message: MOTIV_TEXTS.lose_weight.message,
       color: '#ff8844',
-      stat: 'El 73% de nuestros usuarios alcanzan su peso objetivo en menos de 90 días',
+      stat: MOTIV_TEXTS.lose_weight.stat,
     },
     gain_muscle: {
-      Icon: Dumbbell, title: '¡Es hora de crecer!',
-      message: 'Construir músculo transforma tu cuerpo y tu confianza. Vamos a diseñar tu camino al crecimiento.',
+      Icon: Dumbbell, title: MOTIV_TEXTS.gain_muscle.title,
+      message: MOTIV_TEXTS.gain_muscle.message,
       color: '#00ddff',
-      stat: 'Usuarios con tu perfil ganan en promedio 4.2kg de masa muscular en 12 semanas',
+      stat: MOTIV_TEXTS.gain_muscle.stat,
     },
     get_shredded: {
-      Icon: Zap, title: '¡Definición total!',
-      message: 'Vas por el siguiente nivel. Te ayudaremos a esculpir cada músculo con precisión.',
+      Icon: Zap, title: MOTIV_TEXTS.get_shredded.title,
+      message: MOTIV_TEXTS.get_shredded.message,
       color: '#00ff88',
-      stat: 'El 68% de usuarios logran reducir su % de grasa a niveles fitness en 8 semanas',
+      stat: MOTIV_TEXTS.get_shredded.stat,
     },
   },
   after_measurements: {
-    Icon: ChartBar, title: '¡Excelente! Ya tenemos tus datos',
-    message: 'Con estas medidas vamos a calcular tu composición corporal con precisión científica.',
+    Icon: ChartBar, title: MOTIV_TEXTS.measurements_done.title,
+    message: MOTIV_TEXTS.measurements_done.message,
     color: '#00ff88',
-    stat: 'Nuestros cálculos utilizan 7 fórmulas clínicas validadas internacionalmente',
+    stat: MOTIV_TEXTS.measurements_done.stat,
   },
   after_target: {
-    Icon: Target, title: '¡Meta registrada!', message: null, color: '#00ddff', stat: null,
+    Icon: Target, title: MOTIV_TEXTS.target_set.title, message: null, color: '#00ddff', stat: null,
   },
 };
 

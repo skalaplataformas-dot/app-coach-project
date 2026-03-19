@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS, CONFIRMATIONS } from '@/config/coach-voice';
 
 export default function AdminSystemPage() {
   const toast = useToast();
@@ -29,7 +30,7 @@ export default function AdminSystemPage() {
       const data = await apiFetch('/api/admin/system-health');
       setHealth(data);
     } catch (e) {
-      toast.error('Error al cargar salud del sistema: ' + e.message);
+      toast.error(TOASTS.error_system_health(e.message));
     } finally {
       setLoadingHealth(false);
     }
@@ -47,7 +48,7 @@ export default function AdminSystemPage() {
       const data = await apiFetch(`/api/admin/inactive-users?months=${months}`);
       setInactiveUsers(data);
     } catch (e) {
-      toast.error('Error al buscar usuarios inactivos: ' + e.message);
+      toast.error(TOASTS.error_inactive_search(e.message));
     } finally {
       setLoadingInactive(false);
     }
@@ -71,9 +72,7 @@ export default function AdminSystemPage() {
   // ── Deactivate users ──────────────────────────────────────────────────
   const deactivateSelected = async () => {
     if (selectedUsers.length === 0) return;
-    const ok = confirm(
-      `Vas a DESACTIVAR ${selectedUsers.length} usuario(s). Sus datos se conservarán pero no podrán iniciar sesión. ¿Continuar?`
-    );
+    const ok = confirm(CONFIRMATIONS.deactivate_users(selectedUsers.length));
     if (!ok) return;
 
     setActionLoading('deactivate');
@@ -82,12 +81,12 @@ export default function AdminSystemPage() {
         method: 'POST',
         body: { user_ids: selectedUsers },
       });
-      toast.success(`${result.deactivated || selectedUsers.length} usuario(s) desactivados`);
+      toast.success(TOASTS.users_deactivated(result.deactivated || selectedUsers.length));
       setSelectedUsers([]);
       searchInactive();
       loadHealth();
     } catch (e) {
-      toast.error('Error al desactivar: ' + e.message);
+      toast.error(TOASTS.error_deactivate(e.message));
     } finally {
       setActionLoading(null);
     }
@@ -96,14 +95,10 @@ export default function AdminSystemPage() {
   // ── Permanently delete users ───────────────────────────────────────────
   const deleteSelected = async () => {
     if (selectedUsers.length === 0) return;
-    const ok = confirm(
-      `ATENCIÓN: Vas a ELIMINAR PERMANENTEMENTE ${selectedUsers.length} usuario(s) y TODOS sus datos. Esta acción NO se puede deshacer. ¿Continuar?`
-    );
+    const ok = confirm(CONFIRMATIONS.delete_users(selectedUsers.length));
     if (!ok) return;
 
-    const ok2 = confirm(
-      'Segunda confirmación: Escribe "si" mentalmente. ¿Estás absolutamente seguro?'
-    );
+    const ok2 = confirm(CONFIRMATIONS.delete_users_confirm);
     if (!ok2) return;
 
     setActionLoading('delete');
@@ -112,12 +107,12 @@ export default function AdminSystemPage() {
         method: 'DELETE',
         body: { user_ids: selectedUsers, confirm: true },
       });
-      toast.success(`${result.deleted || selectedUsers.length} usuario(s) eliminados permanentemente`);
+      toast.success(TOASTS.users_deleted(result.deleted || selectedUsers.length));
       setSelectedUsers([]);
       searchInactive();
       loadHealth();
     } catch (e) {
-      toast.error('Error al eliminar: ' + e.message);
+      toast.error(TOASTS.error_delete(e.message));
     } finally {
       setActionLoading(null);
     }
@@ -133,17 +128,17 @@ export default function AdminSystemPage() {
     const label =
       type === 'orphaned' ? 'datos huérfanos' : 'cálculos antiguos';
 
-    const ok = confirm(`Ejecutar limpieza de ${label}?`);
+    const ok = confirm(CONFIRMATIONS.run_cleanup(label));
     if (!ok) return;
 
     setActionLoading(type);
     try {
       const result = await apiFetch(endpoint, { method: 'POST' });
       setCleanupResults((prev) => ({ ...prev, [type]: result }));
-      toast.success(`Limpieza de ${label} completada`);
+      toast.success(TOASTS.cleanup_done(label));
       loadHealth();
     } catch (e) {
-      toast.error('Error en limpieza: ' + e.message);
+      toast.error(TOASTS.error_cleanup(e.message));
     } finally {
       setActionLoading(null);
     }

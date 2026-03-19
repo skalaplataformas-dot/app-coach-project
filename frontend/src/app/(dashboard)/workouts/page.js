@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 import Link from 'next/link';
 
 const CATEGORIES = ['all', 'strength', 'cardio', 'hiit', 'flexibility'];
@@ -20,7 +21,7 @@ export default function WorkoutsPage() {
     const params = category !== 'all' ? `?category=${category}` : '';
     apiFetch(`/api/workouts${params}`)
       .then(setWorkouts)
-      .catch(() => { toast.error('Error al cargar entrenamientos'); setWorkouts([]); })
+      .catch(() => { toast.error(TOASTS.error_workouts); setWorkouts([]); })
       .finally(() => setLoading(false));
   }, [category]);
 

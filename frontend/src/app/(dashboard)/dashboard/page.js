@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import Link from 'next/link';
+import { getGreeting as coachGreeting } from '@/config/coach-voice';
 
 function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Buenos días';
-  if (hour < 19) return 'Buenas tardes';
-  return 'Buenas noches';
+  return '¿Bien o no?';
 }
 
 const GOAL_LABELS = {
@@ -56,7 +54,7 @@ export default function DashboardPage() {
       {/* Greeting + Goal */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold mb-1">
-          {getGreeting()}, <span className="gradient-text">{user?.full_name || 'Coach'}</span>
+          {coachGreeting(user?.full_name || 'crack')}
         </h1>
         <div className="flex items-center gap-2 mt-2">
           <p className="text-sm text-gray-400">Tu resumen de hoy</p>

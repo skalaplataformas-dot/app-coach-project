@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
+import { TOASTS } from '@/config/coach-voice';
 
 const GOAL_OPTIONS = [
   { value: 'lose_weight', label: 'Perder grasa' },
@@ -29,7 +30,7 @@ export default function CoachUserDetailPage() {
   useEffect(() => {
     apiFetch(`/api/coach/users/${userId}`)
       .then(d => { setData(d); setEdits({}); })
-      .catch(() => toast.error('Error al cargar usuario'))
+      .catch(() => toast.error(TOASTS.error_coach_user))
       .finally(() => setLoading(false));
   }, [userId]);
 
@@ -42,13 +43,13 @@ export default function CoachUserDetailPage() {
     setSaving(true);
     try {
       await apiFetch(`/api/coach/users/${userId}`, { method: 'PUT', body: edits });
-      toast.success('Perfil actualizado');
+      toast.success(TOASTS.profile_updated);
       // Refresh data
       const d = await apiFetch(`/api/coach/users/${userId}`);
       setData(d);
       setEdits({});
     } catch {
-      toast.error('Error al guardar');
+      toast.error(TOASTS.error_save);
     } finally {
       setSaving(false);
     }
