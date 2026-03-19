@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import supabase from '../config/supabase.js';
 import { requireAuth } from '../middleware/auth.js';
+import { getExerciseMedia, MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '../utils/exercise-media-map.js';
 
 const router = Router();
 
@@ -52,9 +53,26 @@ router.get('/:id', requireAuth, async (req, res, next) => {
       .order('completed_at', { ascending: false })
       .limit(1);
 
+    // Enrich exercises with media URLs
+    const enrichedExercises = (exercises || []).map(ex => {
+      // Priority: DB video_url > DB exercisedb_id > mapping fallback
+      const media = getExerciseMedia(ex.name);
+      const gifUrl = ex.video_url || (ex.exercisedb_id
+        ? `https://static.exercisedb.dev/media/${ex.exercisedb_id}.gif`
+        : media.gifUrl);
+      const muscleGroup = ex.muscle_group || media.muscleGroup;
+
+      return {
+        ...ex,
+        gif_url: gifUrl,
+        muscle_group: muscleGroup,
+        muscle_group_label: muscleGroup ? MUSCLE_GROUP_LABELS[muscleGroup] || muscleGroup : null,
+      };
+    });
+
     res.json({
       ...workout,
-      exercises: exercises || [],
+      exercises: enrichedExercises,
       last_completed: logs?.[0]?.completed_at || null,
     });
   } catch (err) {
