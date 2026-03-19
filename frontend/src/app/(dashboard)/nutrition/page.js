@@ -32,7 +32,7 @@ export default function NutritionPage() {
         </div>
         <h1 className="text-2xl font-bold mb-3">Plan Nutricional</h1>
         <p className="text-gray-400 mb-2 max-w-md mx-auto">
-          Aun no tienes un plan nutricional generado.
+          Aún no tienes un plan nutricional generado.
         </p>
         <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
           Completa el onboarding o ve a tu perfil para calcular tu metabolismo y generar tu plan personalizado.
@@ -54,11 +54,11 @@ export default function NutritionPage() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="card text-center py-4">
-          <div className="text-xs text-gray-400">Calorias/dia</div>
+          <div className="text-xs text-gray-400">Calorías/día</div>
           <div className="text-2xl font-bold text-primary">{plan.daily_calories}</div>
         </div>
         <div className="card text-center py-4">
-          <div className="text-xs text-gray-400">Proteina</div>
+          <div className="text-xs text-gray-400">Proteína</div>
           <div className={`text-2xl font-bold ${COLORS.protein.text}`}>{plan.protein_g}g</div>
         </div>
         <div className="card text-center py-4">
@@ -73,7 +73,7 @@ export default function NutritionPage() {
 
       {/* Macro Bar */}
       <div className="card mb-6">
-        <h2 className="text-sm font-bold text-gray-400 uppercase mb-3">Distribucion de Macros</h2>
+        <h2 className="text-sm font-bold text-gray-400 uppercase mb-3">Distribución de Macros</h2>
         <MacroBar protein={plan.protein_g} carbs={plan.carbs_g} fat={plan.fat_g} />
       </div>
 
@@ -88,13 +88,13 @@ export default function NutritionPage() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">{plan.deficit_or_surplus > 0 ? 'Superavit' : 'Deficit'}</span>
-            <span className="font-bold">{Math.abs(plan.deficit_or_surplus)} kcal/dia</span>
+            <span className="font-bold">{Math.abs(plan.deficit_or_surplus)} kcal/día</span>
           </div>
           {plan.timeline_days && (
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Tiempo estimado</span>
               <span className="font-bold text-primary">
-                {plan.timeline_days} dias ({Math.round(plan.timeline_days / 7)} semanas)
+                {plan.timeline_days} días ({Math.round(plan.timeline_days / 7)} semanas)
               </span>
             </div>
           )}
@@ -112,7 +112,7 @@ export default function NutritionPage() {
       {/* Meal Distribution Table */}
       {plan.meal_distribution && (
         <div className="card mb-6">
-          <h2 className="text-lg font-bold mb-4">Distribucion por Comida</h2>
+          <h2 className="text-lg font-bold mb-4">Distribución por Comida</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -290,7 +290,7 @@ function MacroBar({ protein, carbs, fat }) {
       </div>
       <div className="flex justify-between mt-2 text-xs text-gray-400">
         <span className="flex items-center gap-1">
-          <span className={`w-2 h-2 rounded-full ${COLORS.protein.bg} inline-block`} /> Proteina {Math.round(pPct)}%
+          <span className={`w-2 h-2 rounded-full ${COLORS.protein.bg} inline-block`} /> Proteína {Math.round(pPct)}%
         </span>
         <span className="flex items-center gap-1">
           <span className={`w-2 h-2 rounded-full ${COLORS.carbs.bg} inline-block`} /> Carbs {Math.round(cPct)}%

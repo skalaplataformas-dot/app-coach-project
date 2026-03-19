@@ -15,7 +15,7 @@ export const strictLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Limite de solicitudes alcanzado para esta operacion. Intenta de nuevo mas tarde.' },
+  message: { error: 'Límite de solicitudes alcanzado para esta operación. Intenta de nuevo más tarde.' },
 });
 
 // ─── Auth limiter: 20 attempts per 15 min (login/register) ─────────────
@@ -24,5 +24,5 @@ export const authLimiter = rateLimit({
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Demasiados intentos de autenticacion. Intenta de nuevo en 15 minutos.' },
+  message: { error: 'Demasiados intentos de autenticación. Intenta de nuevo en 15 minutos.' },
 });

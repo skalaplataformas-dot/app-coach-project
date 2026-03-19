@@ -14,7 +14,7 @@
 export const BRAND = {
   name: 'FitBro',
   tagline: 'Tu coach de fitness inteligente',
-  description: 'Calculos metabolicos avanzados, planes nutricionales personalizados y entrenamientos adaptados a tus objetivos',
+  description: 'Cálculos metabólicos avanzados, planes nutricionales personalizados y entrenamientos adaptados a tus objetivos',
 };
 
 // ─── Color classes (Tailwind) ─────────────────────────────────────────────
@@ -33,7 +33,7 @@ export const COLORS = {
     bgSoft: 'bg-green-400/10',
     border: 'border-green-400/30',
     hex: '#4ade80',
-    label: 'Proteina',
+    label: 'Proteína',
   },
   carbs: {
     text: 'text-blue-400',
@@ -64,8 +64,8 @@ export const COLORS = {
   // Goal badges
   goal: {
     lose_weight:  { text: 'text-orange-400', bg: 'bg-orange-400/10', label: 'Perder Grasa' },
-    gain_muscle:  { text: 'text-primary',    bg: 'bg-primary/10',    label: 'Ganar Musculo' },
-    get_shredded: { text: 'text-red-400',    bg: 'bg-red-400/10',    label: 'Definicion Extrema' },
+    gain_muscle:  { text: 'text-primary',    bg: 'bg-primary/10',    label: 'Ganar Músculo' },
+    get_shredded: { text: 'text-red-400',    bg: 'bg-red-400/10',    label: 'Definición Extrema' },
   },
 
   // Difficulty badges (workouts)

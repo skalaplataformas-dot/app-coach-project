@@ -72,7 +72,7 @@ export default function AdminSystemPage() {
   const deactivateSelected = async () => {
     if (selectedUsers.length === 0) return;
     const ok = confirm(
-      `Vas a DESACTIVAR ${selectedUsers.length} usuario(s). Sus datos se conservaran pero no podran iniciar sesion. Continuar?`
+      `Vas a DESACTIVAR ${selectedUsers.length} usuario(s). Sus datos se conservarán pero no podrán iniciar sesión. ¿Continuar?`
     );
     if (!ok) return;
 
@@ -97,12 +97,12 @@ export default function AdminSystemPage() {
   const deleteSelected = async () => {
     if (selectedUsers.length === 0) return;
     const ok = confirm(
-      `ATENCION: Vas a ELIMINAR PERMANENTEMENTE ${selectedUsers.length} usuario(s) y TODOS sus datos. Esta accion NO se puede deshacer. Continuar?`
+      `ATENCIÓN: Vas a ELIMINAR PERMANENTEMENTE ${selectedUsers.length} usuario(s) y TODOS sus datos. Esta acción NO se puede deshacer. ¿Continuar?`
     );
     if (!ok) return;
 
     const ok2 = confirm(
-      'Segunda confirmacion: Escribe "si" mentalmente. Estas absolutamente seguro?'
+      'Segunda confirmación: Escribe "si" mentalmente. ¿Estás absolutamente seguro?'
     );
     if (!ok2) return;
 
@@ -131,7 +131,7 @@ export default function AdminSystemPage() {
         : '/api/admin/cleanup-calculations';
 
     const label =
-      type === 'orphaned' ? 'datos huerfanos' : 'calculos antiguos';
+      type === 'orphaned' ? 'datos huérfanos' : 'cálculos antiguos';
 
     const ok = confirm(`Ejecutar limpieza de ${label}?`);
     if (!ok) return;
@@ -180,7 +180,7 @@ export default function AdminSystemPage() {
         <div>
           <h1 className="text-2xl font-bold">Panel de Sistema</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Administracion y mantenimiento de la plataforma
+            Administración y mantenimiento de la plataforma
           </p>
         </div>
         <button
@@ -224,7 +224,7 @@ export default function AdminSystemPage() {
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-1">Ultima verificacion</div>
+                <div className="text-xs text-gray-500 mb-1">Última verificación</div>
                 <div className="text-sm font-medium">{formatDate(health?.timestamp)}</div>
               </div>
               <div>
@@ -280,7 +280,7 @@ export default function AdminSystemPage() {
             {inactiveUsers && (
               <>
                 <div className="text-sm text-gray-400 mb-3">
-                  {inactiveUsers.count} usuario(s) inactivos por mas de {inactiveUsers.threshold_months} meses
+                  {inactiveUsers.count} usuario(s) inactivos por más de {inactiveUsers.threshold_months} meses
                 </div>
 
                 {inactiveUsers.users?.length > 0 ? (
@@ -299,7 +299,7 @@ export default function AdminSystemPage() {
                             </th>
                             <th className="text-left py-2">Nombre</th>
                             <th className="text-left py-2">Email</th>
-                            <th className="text-left py-2">Ultima actividad</th>
+                            <th className="text-left py-2">Última actividad</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -367,9 +367,9 @@ export default function AdminSystemPage() {
                     <span className="text-orange-400 font-bold">&#128465;</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold mb-1">Limpiar datos huerfanos</h3>
+                    <h3 className="font-semibold mb-1">Limpiar datos huérfanos</h3>
                     <p className="text-xs text-gray-400 mb-3">
-                      Elimina registros de nutricion, metabolismo y logs que pertenecen a usuarios eliminados o inexistentes.
+                      Elimina registros de nutrición, metabolismo y logs que pertenecen a usuarios eliminados o inexistentes.
                     </p>
                     <button
                       onClick={() => runCleanup('orphaned')}
@@ -397,9 +397,9 @@ export default function AdminSystemPage() {
                     <span className="text-purple-400 font-bold">&#128202;</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold mb-1">Limpiar calculos antiguos</h3>
+                    <h3 className="font-semibold mb-1">Limpiar cálculos antiguos</h3>
                     <p className="text-xs text-gray-400 mb-3">
-                      Conserva solo los ultimos 10 resultados metabolicos por usuario, eliminando los mas antiguos.
+                      Conserva solo los últimos 10 resultados metabólicos por usuario, eliminando los mas antiguos.
                     </p>
                     <button
                       onClick={() => runCleanup('calculations')}

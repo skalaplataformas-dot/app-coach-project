@@ -6,15 +6,15 @@ import Link from 'next/link';
 
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Buenos dias';
+  if (hour < 12) return 'Buenos días';
   if (hour < 19) return 'Buenas tardes';
   return 'Buenas noches';
 }
 
 const GOAL_LABELS = {
   lose_weight: { label: 'Perder peso', color: 'text-orange-400 bg-orange-400/10 border-orange-400/30' },
-  gain_muscle: { label: 'Ganar musculo', color: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/30' },
-  get_shredded: { label: 'Definicion', color: 'text-purple-400 bg-purple-400/10 border-purple-400/30' },
+  gain_muscle: { label: 'Ganar músculo', color: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/30' },
+  get_shredded: { label: 'Definición', color: 'text-purple-400 bg-purple-400/10 border-purple-400/30' },
 };
 
 export default function DashboardPage() {
@@ -80,7 +80,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold">Bienvenido a FitBro</h2>
             </div>
             <p className="text-sm text-gray-400 mb-4">
-              Comienza calculando tu perfil metabolico para obtener un plan personalizado de nutricion y entrenamiento.
+              Comienza calculando tu perfil metabólico para obtener un plan personalizado de nutrición y entrenamiento.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -125,7 +125,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-2xl font-bold text-orange-400">{stats?.streak || 0}</div>
-            <div className="text-xs text-gray-400 mt-1">Racha (dias)</div>
+            <div className="text-xs text-gray-400 mt-1">Racha (días)</div>
           </div>
         </div>
 
@@ -206,7 +206,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="text-center p-3 rounded-xl bg-primary/5 border border-primary/10">
                   <div className="text-lg font-bold text-primary">{nutrition.protein_g}g</div>
-                  <div className="text-xs text-gray-500">Proteina</div>
+                  <div className="text-xs text-gray-500">Proteína</div>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-cyan-400/5 border border-cyan-400/10">
                   <div className="text-lg font-bold text-cyan-400">{nutrition.carbs_g}g</div>
@@ -247,7 +247,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h3 className="font-bold mb-0.5">Plan Nutricional</h3>
-              <p className="text-xs text-gray-400">Tu plan de alimentacion</p>
+              <p className="text-xs text-gray-400">Tu plan de alimentación</p>
             </div>
           </div>
         </Link>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h3 className="font-bold mb-0.5">Calculadora</h3>
-              <p className="text-xs text-gray-400">Calculadora metabolica</p>
+              <p className="text-xs text-gray-400">Calculadora metabólica</p>
             </div>
           </div>
         </Link>
@@ -302,7 +302,7 @@ function CalorieRing({ calories }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xl font-bold text-white">{calories}</span>
-        <span className="text-[10px] text-gray-400">kcal/dia</span>
+        <span className="text-[10px] text-gray-400">kcal/día</span>
       </div>
     </div>
   );

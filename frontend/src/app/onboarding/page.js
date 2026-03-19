@@ -21,29 +21,29 @@ import {
 const SECTION_STEPS = {
   personal_info: [
     {
-      key: 'bodyType', title: 'CUAL ES TU TIPO DE CUERPO?',
-      subtitle: 'Selecciona el que mas se parezca al tuyo',
+      key: 'bodyType', title: '¿CUÁL ES TU TIPO DE CUERPO?',
+      subtitle: 'Selecciona el que más se parezca al tuyo',
       type: 'body_type',
       options: [
-        { label: 'Ectomorfo', value: 'thin', subtext: 'Complexion delgada, metabolismo rapido', Icon: Activity },
-        { label: 'Mesomorfo', value: 'average', subtext: 'Atletico, gana musculo facilmente', Icon: Dumbbell },
-        { label: 'Endomorfo', value: 'heavy', subtext: 'Complexion robusta, retiene energia', Icon: Shield },
+        { label: 'Ectomorfo', value: 'thin', subtext: 'Complexión delgada, metabolismo rápido', Icon: Activity },
+        { label: 'Mesomorfo', value: 'average', subtext: 'Atlético, gana músculo fácilmente', Icon: Dumbbell },
+        { label: 'Endomorfo', value: 'heavy', subtext: 'Complexión robusta, retiene energía', Icon: Shield },
       ],
     },
     {
-      key: 'goal', title: 'CUAL ES TU OBJETIVO PRINCIPAL?',
+      key: 'goal', title: '¿CUÁL ES TU OBJETIVO PRINCIPAL?',
       subtitle: 'Esto determina todo tu plan personalizado',
       type: 'options',
       options: [
-        { label: 'Perder grasa corporal', value: 'lose_weight', subtext: 'Quemar grasa y mejorar composicion', Icon: Flame },
-        { label: 'Ganar masa muscular', value: 'gain_muscle', subtext: 'Aumentar tamano y fuerza', Icon: Dumbbell },
-        { label: 'Definicion extrema', value: 'get_shredded', subtext: 'Marcar cada musculo al maximo', Icon: Zap },
+        { label: 'Perder grasa corporal', value: 'lose_weight', subtext: 'Quemar grasa y mejorar composición', Icon: Flame },
+        { label: 'Ganar masa muscular', value: 'gain_muscle', subtext: 'Aumentar tamaño y fuerza', Icon: Dumbbell },
+        { label: 'Definición extrema', value: 'get_shredded', subtext: 'Marcar cada músculo al máximo', Icon: Zap },
       ],
       motivational: 'after_goal',
     },
     {
-      key: 'sex', title: 'TU GENERO BIOLOGICO',
-      subtitle: 'Necesario para calculos metabolicos precisos',
+      key: 'sex', title: 'TU GÉNERO BIOLÓGICO',
+      subtitle: 'Necesario para cálculos metabólicos precisos',
       type: 'options',
       options: [
         { label: 'Masculino', value: 'M', Icon: User },
@@ -51,10 +51,10 @@ const SECTION_STEPS = {
       ],
     },
     {
-      key: 'age', title: 'CUANTOS ANOS TIENES?',
+      key: 'age', title: '¿CUÁNTOS AÑOS TIENES?',
       subtitle: 'Tu metabolismo cambia con la edad',
       type: 'slider', SliderIcon: Timer,
-      config: { min: 14, max: 70, step: 1, unit: 'anos', default: 25 },
+      config: { min: 14, max: 70, step: 1, unit: 'años', default: 25 },
     },
   ],
 
@@ -67,20 +67,20 @@ const SECTION_STEPS = {
     },
     {
       key: 'weight_kg', title: 'TU PESO ACTUAL',
-      subtitle: 'Se honesto, es tu punto de partida',
+      subtitle: 'Sé honesto, es tu punto de partida',
       type: 'slider', SliderIcon: Scale,
       config: { min: 40, max: 180, step: 0.5, unit: 'kg', default: 75 },
     },
     {
       key: 'target_weight_kg', title: 'TU PESO OBJETIVO',
-      subtitle: 'A donde quieres llegar?',
+      subtitle: '¿A dónde quieres llegar?',
       type: 'slider', SliderIcon: Target,
       config: { min: 40, max: 180, step: 0.5, unit: 'kg', default: 70 },
       motivational: 'after_target',
     },
     {
       key: 'neck_cm', title: 'CIRCUNFERENCIA DE CUELLO',
-      subtitle: 'Mide justo debajo de la nuez de Adan',
+      subtitle: 'Mide justo debajo de la nuez de Adán',
       type: 'slider', SliderIcon: CircleDot,
       config: { min: 25, max: 55, step: 0.5, unit: 'cm', default: 38 },
     },
@@ -93,7 +93,7 @@ const SECTION_STEPS = {
     },
     {
       key: 'hip_cm', title: 'CIRCUNFERENCIA DE CADERA',
-      subtitle: 'La parte mas ancha de los gluteos',
+      subtitle: 'La parte más ancha de los glúteos',
       type: 'slider', SliderIcon: CircleDot,
       config: { min: 60, max: 160, step: 0.5, unit: 'cm', default: 95 },
       condition: (ans) => ans.sex === 'F',
@@ -110,10 +110,10 @@ const SECTION_STEPS = {
 
   health: [
     {
-      key: 'medical_conditions', title: 'CONDICIONES MEDICAS',
+      key: 'medical_conditions', title: 'CONDICIONES MÉDICAS',
       subtitle: 'Nos ayuda a adaptar tu plan de forma segura',
       type: 'text_optional',
-      placeholder: 'Ej: Diabetes, hipertension, hipotiroidismo...',
+      placeholder: 'Ej: Diabetes, hipertensión, hipotiroidismo...',
       helpText: 'Si no tienes ninguna, puedes saltar este paso.',
       Icon: Stethoscope,
     },
@@ -130,7 +130,7 @@ const SECTION_STEPS = {
       subtitle: 'Algunos medicamentos afectan el metabolismo',
       type: 'text_optional',
       placeholder: 'Ej: Metformina, levotiroxina...',
-      helpText: 'Esta informacion es confidencial.',
+      helpText: 'Esta información es confidencial.',
       Icon: Pill,
     },
     {
@@ -145,32 +145,32 @@ const SECTION_STEPS = {
 
   habits: [
     {
-      key: 'sleep_hours', title: 'CUANTAS HORAS DUERMES?',
-      subtitle: 'El sueno es clave para la recuperacion muscular',
+      key: 'sleep_hours', title: '¿CUÁNTAS HORAS DUERMES?',
+      subtitle: 'El sueño es clave para la recuperación muscular',
       type: 'slider', SliderIcon: Moon,
       config: { min: 3, max: 12, step: 1, unit: 'horas', default: 7 },
     },
     {
-      key: 'water_liters', title: 'CUANTA AGUA TOMAS AL DIA?',
-      subtitle: 'La hidratacion afecta directamente tu rendimiento',
+      key: 'water_liters', title: '¿CUÁNTA AGUA TOMAS AL DÍA?',
+      subtitle: 'La hidratación afecta directamente tu rendimiento',
       type: 'slider', SliderIcon: Droplets,
       config: { min: 0.5, max: 5, step: 0.5, unit: 'litros', default: 2 },
     },
     {
-      key: 'stress_level', title: 'TU NIVEL DE ESTRES',
-      subtitle: 'El cortisol alto afecta la composicion corporal',
+      key: 'stress_level', title: 'TU NIVEL DE ESTRÉS',
+      subtitle: 'El cortisol alto afecta la composición corporal',
       type: 'options',
       options: [
         { label: 'Muy bajo', value: 1, subtext: 'Tranquilo y relajado', Icon: Star },
         { label: 'Bajo', value: 2, subtext: 'Ocasionalmente estresado', Icon: Wind },
-        { label: 'Moderado', value: 3, subtext: 'Estres regular', Icon: Activity },
+        { label: 'Moderado', value: 3, subtext: 'Estrés regular', Icon: Activity },
         { label: 'Alto', value: 4, subtext: 'Frecuentemente estresado', Icon: TrendingUp },
-        { label: 'Muy alto', value: 5, subtext: 'Estres constante', Icon: AlertTriangle },
+        { label: 'Muy alto', value: 5, subtext: 'Estrés constante', Icon: AlertTriangle },
       ],
     },
     {
       key: 'alcohol_frequency', title: 'CONSUMO DE ALCOHOL',
-      subtitle: 'El alcohol impacta la recuperacion y los resultados',
+      subtitle: 'El alcohol impacta la recuperación y los resultados',
       type: 'options',
       options: [
         { label: 'Nunca', value: 'never', subtext: 'No consumo alcohol', Icon: Shield },
@@ -180,49 +180,49 @@ const SECTION_STEPS = {
       ],
     },
     {
-      key: 'smoking', title: 'FUMAS?',
+      key: 'smoking', title: '¿FUMAS?',
       subtitle: 'El tabaco afecta la capacidad cardiovascular',
       type: 'options',
       options: [
         { label: 'No fumo', value: false, subtext: 'Sin consumo de tabaco', Icon: Shield },
-        { label: 'Si fumo', value: true, subtext: 'Consumo regular de tabaco', Icon: Cigarette },
+        { label: 'Sí fumo', value: true, subtext: 'Consumo regular de tabaco', Icon: Cigarette },
       ],
     },
   ],
 
   preferences: [
     {
-      key: 'activity_level', title: 'QUE TAN ACTIVO ERES?',
-      subtitle: 'Se realista para obtener calculos precisos',
+      key: 'activity_level', title: '¿QUÉ TAN ACTIVO ERES?',
+      subtitle: 'Sé realista para obtener cálculos precisos',
       type: 'options',
       options: [
-        { label: 'Sedentario', value: 1, subtext: 'Escritorio todo el dia', Icon: User },
-        { label: 'Ligeramente activo', value: 2, subtext: '1-2 dias por semana', Icon: Activity },
-        { label: 'Moderadamente activo', value: 3, subtext: '3-5 dias por semana', Icon: TrendingUp },
-        { label: 'Muy activo', value: 4, subtext: '6-7 dias por semana', Icon: Dumbbell },
+        { label: 'Sedentario', value: 1, subtext: 'Escritorio todo el día', Icon: User },
+        { label: 'Ligeramente activo', value: 2, subtext: '1-2 días por semana', Icon: Activity },
+        { label: 'Moderadamente activo', value: 3, subtext: '3-5 días por semana', Icon: TrendingUp },
+        { label: 'Muy activo', value: 4, subtext: '6-7 días por semana', Icon: Dumbbell },
         { label: 'Extremadamente activo', value: 5, subtext: 'Atleta dedicado', Icon: Trophy },
-        { label: 'Atleta profesional', value: 6, subtext: 'Doble sesion diaria', Icon: Crown },
+        { label: 'Atleta profesional', value: 6, subtext: 'Doble sesión diaria', Icon: Crown },
       ],
     },
     {
-      key: 'meals_per_day', title: 'CUANTAS COMIDAS AL DIA?',
+      key: 'meals_per_day', title: '¿CUÁNTAS COMIDAS AL DÍA?',
       subtitle: 'Distribuiremos tus macros en cada comida',
       type: 'options',
       options: [
         { label: '2 comidas', value: 2, subtext: 'Ayuno intermitente', Icon: Timer },
-        { label: '3 comidas', value: 3, subtext: 'Clasico', Icon: Utensils },
-        { label: '4 comidas', value: 4, subtext: 'Ideal para musculo', Icon: Utensils },
+        { label: '3 comidas', value: 3, subtext: 'Clásico', Icon: Utensils },
+        { label: '4 comidas', value: 4, subtext: 'Ideal para músculo', Icon: Utensils },
         { label: '5 comidas', value: 5, subtext: 'Metabolismo activo', Icon: Utensils },
-        { label: '6+ comidas', value: 6, subtext: 'Maximo rendimiento', Icon: Zap },
+        { label: '6+ comidas', value: 6, subtext: 'Máximo rendimiento', Icon: Zap },
       ],
     },
     {
       key: 'preferred_foods', title: 'TUS ALIMENTOS FAVORITOS',
-      subtitle: 'Selecciona hasta 5 alimentos que prefieras por categoria',
+      subtitle: 'Selecciona hasta 5 alimentos que prefieras por categoría',
       type: 'food_picker',
     },
     {
-      key: 'diet_type', title: 'ALGUNA PREFERENCIA ALIMENTARIA?',
+      key: 'diet_type', title: '¿ALGUNA PREFERENCIA ALIMENTARIA?',
       subtitle: 'Adaptaremos tu plan a tu estilo de vida',
       type: 'options',
       options: [
@@ -230,7 +230,7 @@ const SECTION_STEPS = {
         { label: 'Vegetariana', value: 'vegetarian', subtext: 'Sin carne', Icon: Salad },
         { label: 'Vegana', value: 'vegan', subtext: 'Sin productos animales', Icon: Leaf },
         { label: 'Keto / Low Carb', value: 'keto', subtext: 'Alta grasa, bajos carbs', Icon: Fish },
-        { label: 'Mediterranea', value: 'mediterranean', subtext: 'Equilibrada y natural', Icon: Apple },
+        { label: 'Mediterránea', value: 'mediterranean', subtext: 'Equilibrada y natural', Icon: Apple },
       ],
     },
   ],
@@ -246,24 +246,24 @@ const SECTION_ICONS = {
 // ═══════════════════════════════════════════════════════════════════════
 
 const COACH_MESSAGES = {
-  bodyType: 'Conocer tu somatotipo nos ayuda a personalizar tu plan de entrenamiento y nutricion.',
-  sex: 'Los calculos metabolicos varian significativamente entre hombres y mujeres.',
-  age: 'A partir de los 30, tu metabolismo basal disminuye ~2% por decada. Por eso es clave este dato.',
-  height_cm: 'Tu altura junto con tu peso nos permite calcular tu IMC y composicion corporal.',
-  weight_kg: 'Este es tu punto de partida. Cada cambio que logres sera visible desde aqui.',
-  target_weight_kg: 'Un objetivo realista es perder 0.5-1kg por semana o ganar 0.25-0.5kg de musculo.',
-  neck_cm: 'La medida del cuello es clave en la formula Navy para estimar tu porcentaje de grasa.',
-  waist_cm: 'La circunferencia de cintura es el indicador #1 de salud metabolica segun la OMS.',
+  bodyType: 'Conocer tu somatotipo nos ayuda a personalizar tu plan de entrenamiento y nutrición.',
+  sex: 'Los cálculos metabólicos varían significativamente entre hombres y mujeres.',
+  age: 'A partir de los 30, tu metabolismo basal disminuye ~2% por década. Por eso es clave este dato.',
+  height_cm: 'Tu altura junto con tu peso nos permite calcular tu IMC y composición corporal.',
+  weight_kg: 'Este es tu punto de partida. Cada cambio que logres será visible desde aquí.',
+  target_weight_kg: 'Un objetivo realista es perder 0.5-1kg por semana o ganar 0.25-0.5kg de músculo.',
+  neck_cm: 'La medida del cuello es clave en la fórmula Navy para estimar tu porcentaje de grasa.',
+  waist_cm: 'La circunferencia de cintura es el indicador #1 de salud metabólica según la OMS.',
   activity_level: 'Tu nivel de actividad multiplica tu metabolismo basal para obtener tu gasto real diario.',
-  meals_per_day: 'No hay un numero magico. Lo importante es la consistencia y los macros totales del dia.',
-  preferred_foods: 'Tus alimentos favoritos tendran prioridad en tu plan nutricional personalizado.',
-  diet_type: 'Respetamos tu estilo alimentario. Tu plan se adaptara 100% a tu preferencia.',
+  meals_per_day: 'No hay un número mágico. Lo importante es la consistencia y los macros totales del día.',
+  preferred_foods: 'Tus alimentos favoritos tendrán prioridad en tu plan nutricional personalizado.',
+  diet_type: 'Respetamos tu estilo alimentario. Tu plan se adaptará 100% a tu preferencia.',
   photos: 'Las fotos son opcionales pero son la mejor forma de ver tu progreso real con el tiempo.',
-  medical_conditions: 'Tu salud es primero. Esta informacion nos ayuda a cuidarte mejor.',
+  medical_conditions: 'Tu salud es primero. Esta información nos ayuda a cuidarte mejor.',
   sleep_hours: 'Dormir entre 7-9 horas puede mejorar tus resultados hasta un 40%.',
-  water_liters: 'La hidratacion adecuada mejora el metabolismo y la recuperacion muscular.',
-  stress_level: 'El estres cronico eleva el cortisol y dificulta la perdida de grasa.',
-  alcohol_frequency: 'El alcohol aporta 7 cal/g y dificulta la sintesis de proteinas.',
+  water_liters: 'La hidratación adecuada mejora el metabolismo y la recuperación muscular.',
+  stress_level: 'El estrés crónico eleva el cortisol y dificulta la pérdida de grasa.',
+  alcohol_frequency: 'El alcohol aporta 7 cal/g y dificulta la síntesis de proteínas.',
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -273,32 +273,32 @@ const COACH_MESSAGES = {
 const MOTIVATIONAL_SCREENS = {
   after_goal: {
     lose_weight: {
-      Icon: Flame, title: 'Vamos a lograrlo!',
-      message: 'Cada kilo que pierdas te acerca mas a tu mejor version. Te vamos a guiar en cada paso del camino.',
+      Icon: Flame, title: '¡Vamos a lograrlo!',
+      message: 'Cada kilo que pierdas te acerca más a tu mejor versión. Te vamos a guiar en cada paso del camino.',
       color: '#ff8844',
-      stat: 'El 73% de nuestros usuarios alcanzan su peso objetivo en menos de 90 dias',
+      stat: 'El 73% de nuestros usuarios alcanzan su peso objetivo en menos de 90 días',
     },
     gain_muscle: {
-      Icon: Dumbbell, title: 'Es hora de crecer!',
-      message: 'Construir musculo transforma tu cuerpo y tu confianza. Vamos a disenar tu camino al crecimiento.',
+      Icon: Dumbbell, title: '¡Es hora de crecer!',
+      message: 'Construir músculo transforma tu cuerpo y tu confianza. Vamos a diseñar tu camino al crecimiento.',
       color: '#00ddff',
       stat: 'Usuarios con tu perfil ganan en promedio 4.2kg de masa muscular en 12 semanas',
     },
     get_shredded: {
-      Icon: Zap, title: 'Definicion total!',
-      message: 'Vas por el siguiente nivel. Te ayudaremos a esculpir cada musculo con precision.',
+      Icon: Zap, title: '¡Definición total!',
+      message: 'Vas por el siguiente nivel. Te ayudaremos a esculpir cada músculo con precisión.',
       color: '#00ff88',
       stat: 'El 68% de usuarios logran reducir su % de grasa a niveles fitness en 8 semanas',
     },
   },
   after_measurements: {
-    Icon: ChartBar, title: 'Excelente! Ya tenemos tus datos',
-    message: 'Con estas medidas vamos a calcular tu composicion corporal con precision cientifica.',
+    Icon: ChartBar, title: '¡Excelente! Ya tenemos tus datos',
+    message: 'Con estas medidas vamos a calcular tu composición corporal con precisión científica.',
     color: '#00ff88',
-    stat: 'Nuestros calculos utilizan 7 formulas clinicas validadas internacionalmente',
+    stat: 'Nuestros cálculos utilizan 7 fórmulas clínicas validadas internacionalmente',
   },
   after_target: {
-    Icon: Target, title: 'Meta registrada!', message: null, color: '#00ddff', stat: null,
+    Icon: Target, title: '¡Meta registrada!', message: null, color: '#00ddff', stat: null,
   },
 };
 
@@ -406,14 +406,14 @@ function BodySilhouette({ type, selected, sex = 'M' }) {
 function BodyFatVisual({ percentage, sex }) {
   const ranges = sex === 'F'
     ? [
-        { min: 10, max: 16, label: 'Atletica', color: '#00ddff', icon: Crown },
+        { min: 10, max: 16, label: 'Atlética', color: '#00ddff', icon: Crown },
         { min: 16, max: 22, label: 'Fitness', color: '#00ff88', icon: Star },
         { min: 22, max: 28, label: 'Promedio', color: '#ffcc00', icon: Activity },
         { min: 28, max: 35, label: 'Alto', color: '#ff8844', icon: TrendingUp },
         { min: 35, max: 45, label: 'Muy alto', color: '#ff4444', icon: Shield },
       ]
     : [
-        { min: 6, max: 12, label: 'Atletico', color: '#00ddff', icon: Crown },
+        { min: 6, max: 12, label: 'Atlético', color: '#00ddff', icon: Crown },
         { min: 12, max: 18, label: 'Fitness', color: '#00ff88', icon: Star },
         { min: 18, max: 24, label: 'Promedio', color: '#ffcc00', icon: Activity },
         { min: 24, max: 30, label: 'Alto', color: '#ff8844', icon: TrendingUp },
@@ -568,7 +568,7 @@ function PhotoUploadStep({ answers, setAnswers, onContinue }) {
         ))}
       </div>
       <p className="text-xs text-gray-500 text-center mb-6">
-        Las fotos son opcionales y solo las ves tu. Sirven para comparar tu progreso con el tiempo.
+        Las fotos son opcionales y solo las ves tú. Sirven para comparar tu progreso con el tiempo.
       </p>
       <button onClick={onContinue}
         className="btn-primary w-full text-lg inline-flex items-center justify-center gap-2">
@@ -583,7 +583,7 @@ function PhotoUploadStep({ answers, setAnswers, onContinue }) {
 // ─── Food Picker Step ──────────────────────────────────────────────────
 
 const FOOD_CATEGORIES = ['Proteinas', 'Carbohidratos', 'Grasas'];
-const FOOD_CAT_LABELS = { Proteinas: 'Proteinas', Carbohidratos: 'Carbohidratos', Grasas: 'Grasas' };
+const FOOD_CAT_LABELS = { Proteinas: 'Proteínas', Carbohidratos: 'Carbohidratos', Grasas: 'Grasas' };
 const FOOD_CAT_COLORS = {
   Proteinas: { active: 'bg-green-400 text-black', inactive: 'bg-dark-600 text-gray-300' },
   Carbohidratos: { active: 'bg-cyan-400 text-black', inactive: 'bg-dark-600 text-gray-300' },
@@ -732,7 +732,7 @@ function SectionIntro({ section, sectionIndex, totalSections, onStart }) {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center">
         <div className="text-xs text-gray-500 uppercase tracking-widest mb-6 animate-fade-in">
-          Seccion {sectionIndex + 1} de {totalSections}
+          Sección {sectionIndex + 1} de {totalSections}
         </div>
         <div className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center animate-pop-in bg-primary/10 border-2 border-primary/20">
           <IconComp className="w-10 h-10 text-primary" />
@@ -743,7 +743,7 @@ function SectionIntro({ section, sectionIndex, totalSections, onStart }) {
         </p>
         {!section.required && (
           <p className="text-xs text-gray-500 mb-4 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
-            Esta seccion es opcional
+            Esta sección es opcional
           </p>
         )}
         <button onClick={onStart}
@@ -803,11 +803,11 @@ export default function OnboardingPage() {
   const router = useRouter();
 
   const FALLBACK_SECTIONS = [
-    { key: 'personal_info', title: 'Informacion Personal', description: 'Datos basicos', icon: 'User', required: true },
-    { key: 'measurements', title: 'Medidas Corporales', description: 'Medidas para calculos', icon: 'Ruler', required: true },
+    { key: 'personal_info', title: 'Información Personal', description: 'Datos básicos', icon: 'User', required: true },
+    { key: 'measurements', title: 'Medidas Corporales', description: 'Medidas para cálculos', icon: 'Ruler', required: true },
     { key: 'photos', title: 'Fotos de Progreso', description: 'Registro visual', icon: 'Camera', required: false },
-    { key: 'health', title: 'Salud', description: 'Info medica', icon: 'Heart', required: false },
-    { key: 'habits', title: 'Habitos', description: 'Estilo de vida', icon: 'Coffee', required: false },
+    { key: 'health', title: 'Salud', description: 'Info médica', icon: 'Heart', required: false },
+    { key: 'habits', title: 'Hábitos', description: 'Estilo de vida', icon: 'Coffee', required: false },
     { key: 'preferences', title: 'Preferencias', description: 'Actividad y dieta', icon: 'Settings', required: true },
   ];
 
@@ -909,10 +909,10 @@ export default function OnboardingPage() {
         config = {
           ...MOTIVATIONAL_SCREENS.after_target,
           message: delta === 0
-            ? 'Perfecto! Vamos a mantener tu peso mientras mejoramos tu composicion corporal.'
-            : `${kg} kg por ${verb}. Es un objetivo totalmente alcanzable! Te acompanaremos en cada paso.`,
+            ? '¡Perfecto! Vamos a mantener tu peso mientras mejoramos tu composición corporal.'
+            : `${kg} kg por ${verb}. ¡Es un objetivo totalmente alcanzable! Te acompañaremos en cada paso.`,
           stat: delta !== 0
-            ? `A un ritmo saludable de ${delta > 0 ? '0.3kg' : '0.5kg'} por semana, lo lograras en aproximadamente ${Math.ceil(Math.abs(delta) / (delta > 0 ? 0.3 : 0.5))} semanas`
+            ? `A un ritmo saludable de ${delta > 0 ? '0.3kg' : '0.5kg'} por semana, lo lograrás en aproximadamente ${Math.ceil(Math.abs(delta) / (delta > 0 ? 0.3 : 0.5))} semanas`
             : null,
         };
       } else if (step.motivational === 'after_measurements') {
@@ -1053,10 +1053,10 @@ export default function OnboardingPage() {
               <Trophy className="w-8 h-8 text-primary" />
             </div>
             <h2 className="text-3xl font-bold animate-slide-up-page">
-              Analisis <span className="gradient-text">Completado</span>
+              Análisis <span className="gradient-text">Completado</span>
             </h2>
             <p className="text-gray-400 mt-2 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
-              Tu perfil metabolico personalizado
+              Tu perfil metabólico personalizado
             </p>
           </div>
 
@@ -1065,7 +1065,7 @@ export default function OnboardingPage() {
               <div className="glass-card p-6 text-center animate-scale-in">
                 <div className="text-sm text-gray-400 mb-1">Gasto Diario Total (TDEE)</div>
                 <div className="text-5xl font-bold gradient-text">{Math.round(results.averageTDEE)}</div>
-                <div className="text-sm text-gray-400 mt-1">calorias / dia</div>
+                <div className="text-sm text-gray-400 mt-1">calorías / día</div>
               </div>
               <div className="glass-card p-6 animate-scale-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
                 <BodyFatVisual percentage={results.averageBodyFatPercentage} sex={answers.sex} />
@@ -1091,7 +1091,7 @@ export default function OnboardingPage() {
                     <div className="text-lg font-bold text-white">{Math.round(results.averageRMR)} kcal</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-gray-400">Masa Osea</div>
+                    <div className="text-xs text-gray-400">Masa Ósea</div>
                     <div className="text-lg font-bold text-white">{results.boneMassKg.toFixed(1)} kg</div>
                   </div>
                 </div>
@@ -1099,7 +1099,7 @@ export default function OnboardingPage() {
               <div className="glass-card p-3 animate-fade-in flex items-center gap-2 text-sm text-gray-300"
                 style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
                 <Brain className="w-4 h-4 text-primary flex-shrink-0" />
-                <span>Calculado con 7 formulas clinicas: Navy, Duerenberg, Mifflin-St Jeor, Cunningham y mas</span>
+                <span>Calculado con 7 fórmulas clínicas: Navy, Duerenberg, Mifflin-St Jeor, Cunningham y más</span>
               </div>
             </div>
           )}
@@ -1123,7 +1123,7 @@ export default function OnboardingPage() {
       {(currentStepInSection > 0 || currentSectionIndex > 0) && (
         <button onClick={goBack}
           className="text-gray-400 hover:text-white mb-4 self-start ml-4 flex items-center gap-1 transition-colors">
-          <ChevronLeft className="w-4 h-4" /> Atras
+          <ChevronLeft className="w-4 h-4" /> Atrás
         </button>
       )}
 

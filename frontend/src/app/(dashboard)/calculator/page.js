@@ -20,7 +20,7 @@ export default function CalculatorPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Calculadora Metabolica</h1>
+      <h1 className="text-2xl font-bold mb-6">Calculadora Metabólica</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Form */}
@@ -60,7 +60,7 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          <h4 className="text-sm text-gray-400 uppercase mb-3 mt-6">Antropometria (cm)</h4>
+          <h4 className="text-sm text-gray-400 uppercase mb-3 mt-6">Antropometría (cm)</h4>
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="input-label">Cuello</label>
@@ -89,12 +89,12 @@ export default function CalculatorPage() {
               <div className="bg-dark-700 rounded-xl p-4 text-center">
                 <div className="text-xs text-gray-400">TMB PROMEDIO</div>
                 <div className="text-xl font-bold">{Math.round(results.averageRMR)}</div>
-                <div className="text-xs">kcal/dia</div>
+                <div className="text-xs">kcal/día</div>
               </div>
               <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 text-center">
                 <div className="text-xs text-gray-400">GASTO TOTAL (TDEE)</div>
                 <div className="text-xl font-bold text-primary">{Math.round(results.averageTDEE)}</div>
-                <div className="text-xs">kcal/dia</div>
+                <div className="text-xs">kcal/día</div>
               </div>
             </div>
 
@@ -114,11 +114,11 @@ export default function CalculatorPage() {
             </div>
 
             {/* Energy Table */}
-            <h4 className="text-sm text-gray-400 uppercase mb-2 border-t border-dark-500 pt-4">Desglose Energetico</h4>
+            <h4 className="text-sm text-gray-400 uppercase mb-2 border-t border-dark-500 pt-4">Desglose Energético</h4>
             <table className="w-full text-sm mb-6">
               <thead>
                 <tr className="text-gray-400">
-                  <th className="text-left py-1">Metodo</th>
+                  <th className="text-left py-1">Método</th>
                   <th className="text-right py-1">Basal</th>
                   <th className="text-right py-1">Total</th>
                 </tr>
@@ -135,11 +135,11 @@ export default function CalculatorPage() {
             </table>
 
             {/* Composition Table */}
-            <h4 className="text-sm text-gray-400 uppercase mb-2 border-t border-dark-500 pt-4">Composicion Corporal</h4>
+            <h4 className="text-sm text-gray-400 uppercase mb-2 border-t border-dark-500 pt-4">Composición Corporal</h4>
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-gray-400">
-                  <th className="text-left py-1">Metodo</th>
+                  <th className="text-left py-1">Método</th>
                   <th className="text-right py-1">% Grasa</th>
                   <th className="text-right py-1">Grasa</th>
                   <th className="text-right py-1">Magra</th>

@@ -31,12 +31,12 @@ const features = [
   {
     icon: <CalculatorIcon />,
     title: 'Metabolismo Inteligente',
-    description: 'Calcula tu BMI, composicion corporal, RMR y TDEE con 4 formulas cientificas simultaneas',
+    description: 'Calcula tu BMI, composición corporal, RMR y TDEE con 4 fórmulas científicas simultáneas',
   },
   {
     icon: <NutritionIcon />,
-    title: 'Nutricion Personalizada',
-    description: 'Planes de alimentacion adaptados a tu objetivo: perder peso, ganar musculo o definicion',
+    title: 'Nutrición Personalizada',
+    description: 'Planes de alimentación adaptados a tu objetivo: perder peso, ganar músculo o definición',
   },
   {
     icon: <DumbbellIcon />,
@@ -54,7 +54,7 @@ const steps = [
   {
     number: '02',
     title: 'Recibe tu plan',
-    description: 'Obten calculos metabolicos y un plan nutricional personalizado',
+    description: 'Obtén cálculos metabólicos y un plan nutricional personalizado',
   },
   {
     number: '03',
@@ -105,7 +105,7 @@ export default function LandingPage() {
             }`}
             style={{ transitionDelay: '400ms' }}
           >
-            Calculos metabolicos avanzados, planes nutricionales personalizados y entrenamientos adaptados a tus objetivos
+            Cálculos metabólicos avanzados, planes nutricionales personalizados y entrenamientos adaptados a tus objetivos
           </p>
 
           <div
@@ -125,7 +125,7 @@ export default function LandingPage() {
               href="/login"
               className="px-8 py-4 border border-dark-500 text-gray-300 font-semibold rounded-xl text-lg hover:border-primary/50 hover:text-white transition-colors backdrop-blur-sm"
             >
-              Iniciar Sesion
+              Iniciar Sesión
             </Link>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function LandingPage() {
       <section className="py-24 px-4 bg-dark-800/30">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-            Como funciona
+            Cómo funciona
           </h2>
           <p className="text-gray-400 text-center mb-16 text-lg">
             En 3 simples pasos
@@ -236,12 +236,12 @@ export default function LandingPage() {
           >
             Listo para empezar tu{' '}
             <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-              transformacion
+              transformación
             </span>
             ?
           </h2>
           <p className="text-gray-400 mb-10 text-lg">
-            Unete hoy y accede a todas las herramientas que necesitas
+            Únete hoy y accede a todas las herramientas que necesitas
           </p>
           <Link
             href="/register"
@@ -257,7 +257,7 @@ export default function LandingPage() {
       <footer className="py-8 px-4 border-t border-dark-500">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-500 text-sm">
-            2026 FitBro. Tu transformacion comienza aqui.
+            2026 FitBro. Tu transformación comienza aquí.
           </p>
         </div>
       </footer>

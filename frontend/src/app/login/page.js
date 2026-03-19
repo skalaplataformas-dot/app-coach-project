@@ -38,7 +38,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-2"><span className="text-primary">Fit</span>Bro</h1>
-        <p className="text-gray-400 text-center mb-8">Inicia sesion en tu cuenta</p>
+        <p className="text-gray-400 text-center mb-8">Inicia sesión en tu cuenta</p>
 
         <form onSubmit={handleLogin} className="card space-y-4">
           {error && (
@@ -60,7 +60,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="input-label">Contrasena</label>
+            <label className="input-label">Contraseña</label>
             <input
               type="password"
               className="input-field"
@@ -73,7 +73,7 @@ export default function LoginPage() {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-50">
-            {loading ? 'Cargando...' : 'Iniciar Sesion'}
+            {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </button>
         </form>
 

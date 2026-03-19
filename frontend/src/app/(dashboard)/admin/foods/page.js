@@ -79,7 +79,7 @@ export default function AdminFoodsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Gestion de Alimentos</h1>
+        <h1 className="text-2xl font-bold">Gestión de Alimentos</h1>
         <button onClick={startNew} className="btn-primary text-sm">+ Agregar</button>
       </div>
 

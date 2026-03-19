@@ -40,7 +40,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-2">Crear Cuenta</h1>
-        <p className="text-gray-400 text-center mb-8">Comienza tu transformacion hoy</p>
+        <p className="text-gray-400 text-center mb-8">Comienza tu transformación hoy</p>
 
         <form onSubmit={handleRegister} className="card space-y-4">
           {error && (
@@ -74,13 +74,13 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="input-label">Contrasena</label>
+            <label className="input-label">Contraseña</label>
             <input
               type="password"
               className="input-field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimo 6 caracteres"
+              placeholder="Mínimo 6 caracteres"
               required
               minLength={6}
             />
@@ -94,7 +94,7 @@ export default function RegisterPage() {
         <p className="text-center text-gray-400 mt-6">
           Ya tienes cuenta?{' '}
           <a href="/login" className="text-primary hover:underline">
-            Inicia sesion
+            Inicia sesión
           </a>
         </p>
       </div>

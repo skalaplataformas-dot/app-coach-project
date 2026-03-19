@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 
 const SECTION_ICONS_MAP = {
-  User: 'Informacion Personal',
+  User: 'Información Personal',
   Ruler: 'Medidas',
   Camera: 'Fotos',
   Heart: 'Salud',
@@ -81,7 +81,7 @@ export default function AdminOnboardingPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-400">Cargando configuracion...</div>
+        <div className="text-gray-400">Cargando configuración...</div>
       </div>
     );
   }
@@ -164,12 +164,12 @@ export default function AdminOnboardingPage() {
 
       {sections.length === 0 && (
         <div className="text-center text-gray-500 py-12">
-          No hay secciones configuradas. Ejecuta la migracion SQL para crear las secciones por defecto.
+          No hay secciones configuradas. Ejecuta la migración SQL para crear las secciones por defecto.
         </div>
       )}
 
       <div className="mt-8 card border-dark-500">
-        <h3 className="font-bold text-sm text-gray-400 uppercase mb-2">Como funciona</h3>
+        <h3 className="font-bold text-sm text-gray-400 uppercase mb-2">Cómo funciona</h3>
         <ul className="text-sm text-gray-400 space-y-1">
           <li>- Las secciones <span className="text-white">activas</span> aparecen en el onboarding del usuario</li>
           <li>- Las secciones <span className="text-white">requeridas</span> no se pueden saltar</li>

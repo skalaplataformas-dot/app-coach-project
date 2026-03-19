@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
 
-const GOAL_LABELS = { lose_weight: 'Perder Peso', gain_muscle: 'Ganar Musculo', get_shredded: 'Definicion' };
-const DIET_LABELS = { standard: 'Estandar', keto: 'Keto', vegetarian: 'Vegetariano', vegan: 'Vegano', paleo: 'Paleo' };
+const GOAL_LABELS = { lose_weight: 'Perder Peso', gain_muscle: 'Ganar Músculo', get_shredded: 'Definición' };
+const DIET_LABELS = { standard: 'Estándar', keto: 'Keto', vegetarian: 'Vegetariano', vegan: 'Vegano', paleo: 'Paleo' };
 
 export default function ProfilePage() {
   const toast = useToast();
@@ -163,8 +163,8 @@ export default function ProfilePage() {
               <select className="input-field" value={profile.goal || ''} onChange={e => update('goal', e.target.value)}>
                 <option value="">Seleccionar...</option>
                 <option value="lose_weight">Perder Peso</option>
-                <option value="gain_muscle">Ganar Musculo</option>
-                <option value="get_shredded">Definicion</option>
+                <option value="gain_muscle">Ganar Músculo</option>
+                <option value="get_shredded">Definición</option>
               </select>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="input-label">Comidas por dia</label>
+                <label className="input-label">Comidas por día</label>
                 <select className="input-field" value={profile.meals_per_day || 4} onChange={e => update('meals_per_day', Number(e.target.value))}>
                   <option value="2">2 comidas</option>
                   <option value="3">3 comidas</option>
@@ -194,7 +194,7 @@ export default function ProfilePage() {
             <div>
               <label className="input-label">Tipo de dieta</label>
               <select className="input-field" value={profile.diet_type || 'standard'} onChange={e => update('diet_type', e.target.value)}>
-                <option value="standard">Estandar</option>
+                <option value="standard">Estándar</option>
                 <option value="keto">Keto</option>
                 <option value="vegetarian">Vegetariano</option>
                 <option value="vegan">Vegano</option>
@@ -213,7 +213,7 @@ export default function ProfilePage() {
       {/* Metabolic Summary */}
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold">Resumen Metabolico</h2>
+          <h2 className="text-lg font-bold">Resumen Metabólico</h2>
           {metab?.calculated_at && (
             <span className="text-xs text-gray-500">
               Calculado: {new Date(metab.calculated_at).toLocaleDateString('es')}
@@ -227,7 +227,7 @@ export default function ProfilePage() {
               <div className="bg-dark-700 rounded-xl p-3 text-center">
                 <div className="text-xs text-gray-400">TDEE</div>
                 <div className="text-lg font-bold text-primary">{Math.round(metab.avg_tdee)}</div>
-                <div className="text-xs text-gray-500">kcal/dia</div>
+                <div className="text-xs text-gray-500">kcal/día</div>
               </div>
               <div className="bg-dark-700 rounded-xl p-3 text-center">
                 <div className="text-xs text-gray-400">% Grasa</div>
@@ -254,7 +254,7 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="text-center py-6">
-            <p className="text-gray-400 mb-4">No hay datos metabolicos. Recalcula con tus medidas actuales.</p>
+            <p className="text-gray-400 mb-4">No hay datos metabólicos. Recalcula con tus medidas actuales.</p>
             <button
               type="button"
               onClick={handleRecalculate}
