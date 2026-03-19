@@ -10,6 +10,7 @@ export default function NutritionPage() {
   const toast = useToast();
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [regenerating, setRegenerating] = useState(false);
   const [expandedMeals, setExpandedMeals] = useState({});
 
   useEffect(() => {
@@ -21,6 +22,18 @@ export default function NutritionPage() {
 
   const toggleMeal = (idx) => {
     setExpandedMeals(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const handleRegenerateSuggestions = async () => {
+    setRegenerating(true);
+    try {
+      const updated = await apiFetch('/api/nutrition/regenerate-suggestions', { method: 'POST', body: {} });
+      setPlan(updated);
+      toast.success(TOASTS.plan_generated);
+    } catch (err) {
+      toast.error(TOASTS.error_nutrition);
+    }
+    setRegenerating(false);
   };
 
   if (loading) return <div className="text-gray-400 text-center py-12">Cargando...</div>;
@@ -144,19 +157,44 @@ export default function NutritionPage() {
       )}
 
       {/* Meal Suggestions */}
-      {plan.meal_distribution && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-bold">Sugerencias de Alimentos</h2>
-          {plan.meal_distribution.map((meal, idx) => (
-            <MealSuggestionCard
-              key={idx}
-              meal={meal}
-              expanded={expandedMeals[idx] !== false}
-              onToggle={() => toggleMeal(idx)}
-            />
-          ))}
-        </div>
-      )}
+      {plan.meal_distribution && (() => {
+        const hasSuggestions = plan.meal_distribution.some(m => m.suggestions && m.suggestions.length > 0);
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold">Sugerencias de Alimentos</h2>
+              <button
+                onClick={handleRegenerateSuggestions}
+                disabled={regenerating}
+                className="text-xs px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+              >
+                {regenerating ? 'Generando...' : hasSuggestions ? '🔄 Nuevas opciones' : '✨ Generar sugerencias'}
+              </button>
+            </div>
+            {hasSuggestions ? (
+              plan.meal_distribution.map((meal, idx) => (
+                <MealSuggestionCard
+                  key={idx}
+                  meal={meal}
+                  expanded={expandedMeals[idx] !== false}
+                  onToggle={() => toggleMeal(idx)}
+                />
+              ))
+            ) : (
+              <div className="card text-center py-8">
+                <p className="text-gray-400 mb-3">Tu plan aún no tiene sugerencias de alimentos</p>
+                <button
+                  onClick={handleRegenerateSuggestions}
+                  disabled={regenerating}
+                  className="btn-primary"
+                >
+                  {regenerating ? 'Generando...' : 'Generar sugerencias de alimentos'}
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

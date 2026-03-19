@@ -88,4 +88,60 @@ router.get('/plan', requireAuth, async (req, res, next) => {
   }
 });
 
+// POST /api/nutrition/regenerate-suggestions — regenerate food suggestions for existing plan
+router.post('/regenerate-suggestions', requireAuth, async (req, res, next) => {
+  try {
+    // Get current plan
+    const { data: plan, error: planErr } = await supabase
+      .from('nutrition_plans')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (planErr || !plan) {
+      return res.status(404).json({ error: 'No tienes un plan nutricional. Genera uno primero.' });
+    }
+
+    if (!plan.meal_distribution || plan.meal_distribution.length === 0) {
+      return res.status(400).json({ error: 'El plan no tiene distribución de comidas.' });
+    }
+
+    // Fetch foods and preferences
+    const [{ data: foods }, { data: profile }] = await Promise.all([
+      supabase.from('foods').select('*'),
+      supabase.from('profiles').select('preferred_foods').eq('id', req.user.id).single(),
+    ]);
+
+    // Strip old suggestions to get clean meal targets
+    const cleanMeals = plan.meal_distribution.map(m => ({
+      name: m.name,
+      percentage: m.percentage,
+      calories: m.calories,
+      protein_g: m.protein_g,
+      carbs_g: m.carbs_g,
+      fat_g: m.fat_g,
+    }));
+
+    // Generate new suggestions with different seed for variety
+    const seed = Math.floor(Date.now() / 1000) % 365;
+    const enrichedMeals = generateMealSuggestions(cleanMeals, foods || [], seed, profile?.preferred_foods);
+
+    // Update the plan in place
+    const { data: updated, error: updateErr } = await supabase
+      .from('nutrition_plans')
+      .update({ meal_distribution: enrichedMeals })
+      .eq('id', plan.id)
+      .select()
+      .single();
+
+    if (updateErr) throw updateErr;
+
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
