@@ -26,10 +26,13 @@ router.post('/plan', requireAuth, strictLimiter, ...validateNutritionPlan, async
       deficitLevel: deficit_level || 'moderate',
     });
 
-    // Fetch foods and generate meal suggestions
-    const { data: foods } = await supabase.from('foods').select('*');
+    // Fetch foods and user preferences, then generate meal suggestions
+    const [{ data: foods }, { data: profile }] = await Promise.all([
+      supabase.from('foods').select('*'),
+      supabase.from('profiles').select('preferred_foods').eq('id', req.user.id).single(),
+    ]);
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    const enrichedMeals = generateMealSuggestions(plan.mealDistribution, foods || [], dayOfYear);
+    const enrichedMeals = generateMealSuggestions(plan.mealDistribution, foods || [], dayOfYear, profile?.preferred_foods);
 
     // Save to database
     const { data, error } = await supabase

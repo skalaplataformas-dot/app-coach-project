@@ -28,6 +28,19 @@ function groupByCategory(foods) {
   return g;
 }
 
+// Reorder each category so preferred foods come first in the array.
+// This means pick() with low seeds (0, 1, 2) will select preferred foods.
+function prioritizeFoods(groups, preferredFoods) {
+  if (!preferredFoods || typeof preferredFoods !== 'object') return groups;
+  for (const [category, prefNames] of Object.entries(preferredFoods)) {
+    if (!groups[category] || !Array.isArray(prefNames)) continue;
+    const preferred = groups[category].filter(f => prefNames.includes(f.name));
+    const rest = groups[category].filter(f => !prefNames.includes(f.name));
+    groups[category] = [...preferred, ...rest];
+  }
+  return groups;
+}
+
 function pick(arr, seed) {
   if (!arr || !arr.length) return null;
   return arr[((seed % arr.length) + arr.length) % arr.length];
@@ -428,10 +441,10 @@ function composeSnack(target, groups, seed, allFoods) {
 
 // ─── Public API ────────────────────────────────────────────────────────
 
-export function generateMealSuggestions(mealDistribution, foods, seed = 0) {
+export function generateMealSuggestions(mealDistribution, foods, seed = 0, preferredFoods = null) {
   if (!foods || foods.length === 0) return mealDistribution;
 
-  const groups = groupByCategory(foods);
+  const groups = prioritizeFoods(groupByCategory(foods), preferredFoods);
   const dailyCal = mealDistribution.reduce((s, m) => s + m.calories, 0);
 
   return mealDistribution.map((meal, idx) => {

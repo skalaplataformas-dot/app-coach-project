@@ -217,6 +217,11 @@ const SECTION_STEPS = {
       ],
     },
     {
+      key: 'preferred_foods', title: 'TUS ALIMENTOS FAVORITOS',
+      subtitle: 'Selecciona hasta 5 alimentos que prefieras por categoria',
+      type: 'food_picker',
+    },
+    {
       key: 'diet_type', title: 'ALGUNA PREFERENCIA ALIMENTARIA?',
       subtitle: 'Adaptaremos tu plan a tu estilo de vida',
       type: 'options',
@@ -251,6 +256,7 @@ const COACH_MESSAGES = {
   waist_cm: 'La circunferencia de cintura es el indicador #1 de salud metabolica segun la OMS.',
   activity_level: 'Tu nivel de actividad multiplica tu metabolismo basal para obtener tu gasto real diario.',
   meals_per_day: 'No hay un numero magico. Lo importante es la consistencia y los macros totales del dia.',
+  preferred_foods: 'Tus alimentos favoritos tendran prioridad en tu plan nutricional personalizado.',
   diet_type: 'Respetamos tu estilo alimentario. Tu plan se adaptara 100% a tu preferencia.',
   photos: 'Las fotos son opcionales pero son la mejor forma de ver tu progreso real con el tiempo.',
   medical_conditions: 'Tu salud es primero. Esta informacion nos ayuda a cuidarte mejor.',
@@ -574,6 +580,125 @@ function PhotoUploadStep({ answers, setAnswers, onContinue }) {
 }
 
 // ─── Text Optional Step (for health fields) ──────────────────────────────
+// ─── Food Picker Step ──────────────────────────────────────────────────
+
+const FOOD_CATEGORIES = ['Proteinas', 'Carbohidratos', 'Grasas'];
+const FOOD_CAT_LABELS = { Proteinas: 'Proteinas', Carbohidratos: 'Carbohidratos', Grasas: 'Grasas' };
+const FOOD_CAT_COLORS = {
+  Proteinas: { active: 'bg-green-400 text-black', inactive: 'bg-dark-600 text-gray-300' },
+  Carbohidratos: { active: 'bg-cyan-400 text-black', inactive: 'bg-dark-600 text-gray-300' },
+  Grasas: { active: 'bg-yellow-400 text-black', inactive: 'bg-dark-600 text-gray-300' },
+};
+const MAX_PER_CATEGORY = 5;
+
+function FoodPickerStep({ value, onChange, onContinue }) {
+  const [foods, setFoods] = useState([]);
+  const [activeTab, setActiveTab] = useState('Proteinas');
+  const [loadingFoods, setLoadingFoods] = useState(true);
+  const selected = value || {};
+
+  useEffect(() => {
+    apiFetch('/api/foods')
+      .then(data => setFoods(data || []))
+      .catch(() => setFoods([]))
+      .finally(() => setLoadingFoods(false));
+  }, []);
+
+  const foodsByCategory = {};
+  for (const cat of FOOD_CATEGORIES) {
+    foodsByCategory[cat] = foods.filter(f => f.category === cat);
+  }
+
+  const toggleFood = (category, foodName) => {
+    const current = selected[category] || [];
+    let updated;
+    if (current.includes(foodName)) {
+      updated = current.filter(n => n !== foodName);
+    } else {
+      if (current.length >= MAX_PER_CATEGORY) return;
+      updated = [...current, foodName];
+    }
+    onChange({ ...selected, [category]: updated });
+  };
+
+  const totalSelected = Object.values(selected).reduce((s, arr) => s + (arr?.length || 0), 0);
+
+  return (
+    <div className="animate-slide-up-page">
+      <div className="flex justify-center mb-4">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Star className="w-8 h-8 text-primary" />
+        </div>
+      </div>
+
+      {/* Category Tabs */}
+      <div className="flex gap-2 mb-4">
+        {FOOD_CATEGORIES.map(cat => {
+          const isActive = activeTab === cat;
+          const count = (selected[cat] || []).length;
+          const colors = FOOD_CAT_COLORS[cat];
+          return (
+            <button
+              key={cat}
+              onClick={() => setActiveTab(cat)}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-colors ${
+                isActive ? colors.active : colors.inactive
+              }`}
+            >
+              {FOOD_CAT_LABELS[cat]} {count > 0 && `(${count})`}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Food chips */}
+      {loadingFoods ? (
+        <div className="text-gray-400 text-center py-8">Cargando alimentos...</div>
+      ) : (
+        <div className="max-h-64 overflow-y-auto pr-1 space-y-2">
+          <div className="flex flex-wrap gap-2">
+            {(foodsByCategory[activeTab] || []).map(food => {
+              const isSelected = (selected[activeTab] || []).includes(food.name);
+              const atMax = !isSelected && (selected[activeTab] || []).length >= MAX_PER_CATEGORY;
+              return (
+                <button
+                  key={food.id}
+                  onClick={() => toggleFood(activeTab, food.name)}
+                  disabled={atMax}
+                  className={`px-3 py-2 rounded-xl text-sm transition-all ${
+                    isSelected
+                      ? 'bg-primary/15 border border-primary/40 text-primary font-medium'
+                      : atMax
+                        ? 'bg-dark-700 border border-dark-600 text-gray-600 cursor-not-allowed'
+                        : 'bg-dark-700 border border-dark-500 text-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  {isSelected && <span className="mr-1">✓</span>}
+                  {food.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Counter */}
+      <div className="flex justify-between items-center mt-4 text-xs text-gray-500">
+        <span>{(selected[activeTab] || []).length}/{MAX_PER_CATEGORY} en {FOOD_CAT_LABELS[activeTab]}</span>
+        <span>{totalSelected} alimentos seleccionados</span>
+      </div>
+
+      {/* Continue button */}
+      <button
+        onClick={onContinue}
+        className="w-full mt-4 py-4 bg-primary text-dark-900 font-bold rounded-2xl text-lg hover:bg-primary-dark transition-colors"
+      >
+        {totalSelected > 0 ? 'Continuar' : 'Omitir'} →
+      </button>
+    </div>
+  );
+}
+
 function TextOptionalStep({ step, value, onChange, onContinue }) {
   const StepIcon = step.Icon;
   return (
@@ -835,6 +960,7 @@ export default function OnboardingPage() {
         'medical_conditions', 'injuries', 'medications', 'allergies',
         'sleep_hours', 'water_liters', 'stress_level', 'alcohol_frequency', 'smoking',
         'photo_front', 'photo_side', 'photo_back',
+        'preferred_foods',
       ];
 
       const profileData = { onboarding_completed: true };
@@ -1059,6 +1185,14 @@ export default function OnboardingPage() {
           <TextOptionalStep step={step} value={answers[step.key]}
             onChange={(v) => setAnswers(prev => ({ ...prev, [step.key]: v }))}
             onContinue={advanceStep} />
+        )}
+
+        {step.type === 'food_picker' && (
+          <FoodPickerStep
+            value={answers[step.key] || {}}
+            onChange={(v) => setAnswers(prev => ({ ...prev, [step.key]: v }))}
+            onContinue={advanceStep}
+          />
         )}
       </div>
 
