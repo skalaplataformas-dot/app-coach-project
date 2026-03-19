@@ -8,6 +8,7 @@ import {
   cleanOrphanedData,
   getStorageStats,
   cleanOldCalculations,
+  cleanOldMessages,
 } from '../utils/data-cleanup.js';
 
 const router = Router();
@@ -89,6 +90,16 @@ router.post('/cleanup-calculations', requireAuth, adminOnly, async (req, res, ne
   try {
     const result = await cleanOldCalculations();
     res.json({ message: 'Limpieza de calculos antiguos completada', ...result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/admin/cleanup-messages
+router.post('/cleanup-messages', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const result = await cleanOldMessages(req.body?.days || 90);
+    res.json({ message: 'Limpieza de mensajes antiguos completada', ...result });
   } catch (err) {
     next(err);
   }

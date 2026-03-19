@@ -75,6 +75,7 @@ export async function permanentlyDeleteUsers(userIds) {
       await supabase.from('workout_logs').delete().eq('user_id', userId);
       await supabase.from('nutrition_plans').delete().eq('user_id', userId);
       await supabase.from('metabolic_results').delete().eq('user_id', userId);
+      await supabase.from('messages').delete().eq('author_id', userId);
       await supabase.from('profiles').delete().eq('id', userId);
 
       // Delete from Supabase Auth
@@ -148,7 +149,7 @@ export async function cleanOrphanedData() {
 export async function getStorageStats() {
   const tables = [
     'profiles', 'metabolic_results', 'nutrition_plans',
-    'foods', 'workouts', 'exercises', 'workout_logs', 'onboarding_sections',
+    'foods', 'workouts', 'exercises', 'workout_logs', 'onboarding_sections', 'messages',
   ];
 
   const stats = {};
@@ -221,4 +222,25 @@ export async function cleanOldCalculations() {
   }
 
   return { cleaned: totalCleaned };
+}
+
+/**
+ * Clean old messages (non-pinned older than X days)
+ * Pinned messages are preserved indefinitely
+ * @param {number} days - Threshold in days (default 90)
+ * @returns {Object} Count of cleaned messages
+ */
+export async function cleanOldMessages(days = 90) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+
+  const { data, error } = await supabase
+    .from('messages')
+    .delete()
+    .eq('pinned', false)
+    .lt('created_at', cutoff.toISOString())
+    .select('id');
+
+  if (error) throw error;
+  return { cleaned: data?.length || 0 };
 }
