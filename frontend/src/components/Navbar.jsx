@@ -11,6 +11,7 @@ const PAGE_NAMES = {
   '/workouts': 'Entrenamientos',
   '/feed': 'Muro',
   '/profile': 'Mi Perfil',
+  '/admin/coach': 'Asesorados',
   '/admin/feed': 'Gestión de Mensajes',
   '/admin/foods': 'Gestión de Alimentos',
   '/admin/system': 'Panel de Sistema',
