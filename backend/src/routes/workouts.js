@@ -11,10 +11,14 @@ router.get('/', requireAuth, async (req, res, next) => {
     let query = supabase
       .from('workouts')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('muscle_group', { ascending: true })
+      .order('title', { ascending: true });
 
     if (req.query.category) {
       query = query.eq('category', req.query.category);
+    }
+    if (req.query.muscle_group) {
+      query = query.eq('muscle_group', req.query.muscle_group);
     }
 
     const { data, error } = await query;

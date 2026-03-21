@@ -2,46 +2,70 @@
 
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
+import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { TOASTS } from '@/config/coach-voice';
 import Link from 'next/link';
 
-const CATEGORIES = ['all', 'strength', 'cardio', 'hiit', 'flexibility'];
-const CATEGORY_LABELS = { all: 'Todos', strength: 'Fuerza', cardio: 'Cardio', hiit: 'HIIT', flexibility: 'Flexibilidad' };
 const DIFFICULTY_COLORS = { beginner: 'text-green-400', intermediate: 'text-yellow-400', advanced: 'text-red-400' };
 const DIFFICULTY_LABELS = { beginner: 'Principiante', intermediate: 'Intermedio', advanced: 'Avanzado' };
-
 const DAY_NAMES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+const MUSCLE_GROUPS = [
+  { key: 'all', label: 'Todos' },
+  { key: 'pecho_triceps', label: 'Pecho y Tríceps', icon: '💪' },
+  { key: 'pecho_hombros_triceps', label: 'Push (Pecho/Hombros/Tríceps)', icon: '🏋️' },
+  { key: 'espalda_biceps', label: 'Espalda y Bíceps', icon: '🔙' },
+  { key: 'hombros', label: 'Hombros', icon: '🤸' },
+  { key: 'piernas', label: 'Piernas', icon: '🦵' },
+  { key: 'abdominales', label: 'Abdominales', icon: '🎯' },
+  { key: 'full_body', label: 'Full Body', icon: '⚡' },
+  { key: 'cardio', label: 'Cardio / HIIT', icon: '❤️' },
+  { key: 'flexibilidad', label: 'Flexibilidad', icon: '🧘' },
+];
 
 export default function WorkoutsPage() {
   const toast = useToast();
-  const [workouts, setWorkouts] = useState([]);
-  const [category, setCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const { user } = useUser();
+  const isAdmin = user?.role === 'admin';
+
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [weekSchedule, setWeekSchedule] = useState([]);
   const [completing, setCompleting] = useState(null);
+  const [loadingSchedule, setLoadingSchedule] = useState(true);
 
+  // Admin catalog state
+  const [workouts, setWorkouts] = useState([]);
+  const [muscleFilter, setMuscleFilter] = useState('all');
+  const [loadingCatalog, setLoadingCatalog] = useState(false);
+
+  // Load schedule for all users
   useEffect(() => {
-    // Load schedule
-    apiFetch('/api/workouts/schedule/today').then(setTodaySchedule).catch(() => {});
-    apiFetch('/api/workouts/schedule/week').then(setWeekSchedule).catch(() => {});
+    Promise.all([
+      apiFetch('/api/workouts/schedule/today').catch(() => []),
+      apiFetch('/api/workouts/schedule/week').catch(() => []),
+    ]).then(([today, week]) => {
+      setTodaySchedule(today);
+      setWeekSchedule(week);
+    }).finally(() => setLoadingSchedule(false));
   }, []);
 
+  // Load catalog only for admin
   useEffect(() => {
-    const params = category !== 'all' ? `?category=${category}` : '';
+    if (!isAdmin) return;
+    setLoadingCatalog(true);
+    const params = muscleFilter !== 'all' ? `?muscle_group=${muscleFilter}` : '';
     apiFetch(`/api/workouts${params}`)
       .then(setWorkouts)
       .catch(() => { toast.error(TOASTS.error_workouts); setWorkouts([]); })
-      .finally(() => setLoading(false));
-  }, [category]);
+      .finally(() => setLoadingCatalog(false));
+  }, [isAdmin, muscleFilter]);
 
   const handleComplete = async (scheduleId) => {
     setCompleting(scheduleId);
     try {
       await apiFetch(`/api/workouts/schedule/${scheduleId}/complete`, { method: 'PUT' });
       toast.success(TOASTS.workout_completed);
-      // Refresh
       const [today, week] = await Promise.all([
         apiFetch('/api/workouts/schedule/today'),
         apiFetch('/api/workouts/schedule/week'),
@@ -71,24 +95,40 @@ export default function WorkoutsPage() {
     return { date: d, dateStr, dayName: DAY_NAMES[i], scheduled, isToday };
   });
 
+  // Group workouts by muscle_group for admin catalog
+  const groupedWorkouts = {};
+  workouts.forEach(w => {
+    const group = w.muscle_group || 'otros';
+    if (!groupedWorkouts[group]) groupedWorkouts[group] = [];
+    groupedWorkouts[group].push(w);
+  });
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Entrenamientos</h1>
 
-      {/* Today's Workout */}
-      {todaySchedule.length > 0 && (
+      {/* ─── TODAY'S WORKOUT ─────────────────────────────────── */}
+      {loadingSchedule ? (
+        <div className="text-gray-400 text-center py-8">Cargando tu entrenamiento...</div>
+      ) : todaySchedule.length > 0 ? (
         <div className="mb-6">
-          <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">Entrenamiento de hoy</h2>
+          <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">
+            Entrenamiento de hoy
+          </h2>
           <div className="space-y-3">
             {todaySchedule.map(s => (
               <div key={s.id} className={`card border-l-4 ${s.completed ? 'border-l-green-500 opacity-75' : 'border-l-primary'}`}>
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-bold text-lg">{s.workouts?.title || 'Entrenamiento'}</h3>
-                    <div className="flex gap-3 mt-1 text-sm text-gray-400">
-                      {s.workouts?.category && <span className="capitalize">{CATEGORY_LABELS[s.workouts.category] || s.workouts.category}</span>}
+                    <p className="text-sm text-gray-400 mt-1">{s.workouts?.description || ''}</p>
+                    <div className="flex gap-3 mt-2 text-sm text-gray-400">
                       {s.workouts?.duration_minutes && <span>{s.workouts.duration_minutes} min</span>}
-                      {s.workouts?.difficulty && <span className={DIFFICULTY_COLORS[s.workouts.difficulty]}>{DIFFICULTY_LABELS[s.workouts.difficulty]}</span>}
+                      {s.workouts?.difficulty && (
+                        <span className={DIFFICULTY_COLORS[s.workouts.difficulty]}>
+                          {DIFFICULTY_LABELS[s.workouts.difficulty]}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -103,7 +143,7 @@ export default function WorkoutsPage() {
                       <>
                         <Link href={`/workouts/${s.workouts?.id}`}
                           className="text-sm text-primary hover:underline">
-                          Ver detalle
+                          Ver ejercicios
                         </Link>
                         <button onClick={() => handleComplete(s.id)} disabled={completing === s.id}
                           className="btn-primary px-4 py-2 text-sm disabled:opacity-50">
@@ -117,10 +157,16 @@ export default function WorkoutsPage() {
             ))}
           </div>
         </div>
+      ) : (
+        <div className="card mb-6 text-center py-8">
+          <div className="text-4xl mb-3">🏖️</div>
+          <h3 className="font-bold text-lg mb-1">Día de descanso</h3>
+          <p className="text-gray-400 text-sm">No tienes entrenamiento asignado para hoy. Aprovecha para recuperarte.</p>
+        </div>
       )}
 
-      {/* Weekly Calendar */}
-      <div className="mb-6">
+      {/* ─── WEEKLY CALENDAR ─────────────────────────────────── */}
+      <div className="mb-8">
         <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">Esta semana</h2>
         <div className="grid grid-cols-7 gap-1">
           {weekDays.map(day => (
@@ -150,47 +196,82 @@ export default function WorkoutsPage() {
         </div>
       </div>
 
-      {/* All Workouts Catalog */}
-      <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">Catálogo de entrenamientos</h2>
+      {/* ─── ADMIN: CATALOG BY MUSCLE GROUP ──────────────────── */}
+      {isAdmin && (
+        <>
+          <div className="border-t border-dark-500 pt-6 mt-2">
+            <h2 className="text-lg font-bold mb-4">Catálogo de Entrenamientos</h2>
 
-      {/* Category Filter */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => { setCategory(cat); setLoading(true); }}
-            className={`px-4 py-2 rounded-full text-sm transition-colors ${
-              category === cat
-                ? 'bg-primary text-black font-bold'
-                : 'bg-dark-600 text-gray-300 hover:bg-dark-500'
-            }`}
-          >
-            {CATEGORY_LABELS[cat]}
-          </button>
-        ))}
-      </div>
+            {/* Muscle group filter */}
+            <div className="flex gap-2 mb-6 flex-wrap">
+              {MUSCLE_GROUPS.map(mg => (
+                <button
+                  key={mg.key}
+                  onClick={() => { setMuscleFilter(mg.key); }}
+                  className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                    muscleFilter === mg.key
+                      ? 'bg-primary text-black font-bold'
+                      : 'bg-dark-600 text-gray-300 hover:bg-dark-500'
+                  }`}
+                >
+                  {mg.icon ? `${mg.icon} ` : ''}{mg.label}
+                </button>
+              ))}
+            </div>
 
-      {loading ? (
-        <div className="text-gray-400 text-center py-12">Cargando entrenamientos...</div>
-      ) : workouts.length === 0 ? (
-        <div className="text-gray-400 text-center py-12">No hay entrenamientos disponibles</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {workouts.map((w) => (
-            <Link key={w.id} href={`/workouts/${w.id}`}>
-              <div className="card hover:border-primary transition-colors cursor-pointer">
-                <h3 className="font-bold text-lg mb-2">{w.title}</h3>
-                <p className="text-sm text-gray-400 mb-3 line-clamp-2">{w.description}</p>
-                <div className="flex items-center justify-between text-sm">
-                  <span className={DIFFICULTY_COLORS[w.difficulty]}>
-                    {DIFFICULTY_LABELS[w.difficulty]}
-                  </span>
-                  <span className="text-gray-500">{w.duration_minutes} min</span>
-                </div>
+            {loadingCatalog ? (
+              <div className="text-gray-400 text-center py-8">Cargando catálogo...</div>
+            ) : workouts.length === 0 ? (
+              <div className="text-gray-400 text-center py-8">No hay entrenamientos en esta categoría</div>
+            ) : muscleFilter === 'all' ? (
+              // Grouped view when "Todos" is selected
+              Object.entries(groupedWorkouts).map(([group, items]) => {
+                const mgInfo = MUSCLE_GROUPS.find(mg => mg.key === group);
+                return (
+                  <div key={group} className="mb-6">
+                    <h3 className="text-sm uppercase tracking-wider text-primary mb-3">
+                      {mgInfo ? `${mgInfo.icon} ${mgInfo.label}` : group}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {items.map(w => (
+                        <Link key={w.id} href={`/workouts/${w.id}`}>
+                          <div className="card hover:border-primary transition-colors cursor-pointer">
+                            <h4 className="font-bold mb-1">{w.title}</h4>
+                            <p className="text-xs text-gray-400 mb-2 line-clamp-2">{w.description}</p>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className={DIFFICULTY_COLORS[w.difficulty]}>
+                                {DIFFICULTY_LABELS[w.difficulty]}
+                              </span>
+                              <span className="text-gray-500">{w.duration_minutes} min</span>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              // Flat view when a specific muscle group is selected
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {workouts.map(w => (
+                  <Link key={w.id} href={`/workouts/${w.id}`}>
+                    <div className="card hover:border-primary transition-colors cursor-pointer">
+                      <h4 className="font-bold mb-1">{w.title}</h4>
+                      <p className="text-xs text-gray-400 mb-2 line-clamp-2">{w.description}</p>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className={DIFFICULTY_COLORS[w.difficulty]}>
+                          {DIFFICULTY_LABELS[w.difficulty]}
+                        </span>
+                        <span className="text-gray-500">{w.duration_minutes} min</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
