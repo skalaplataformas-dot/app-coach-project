@@ -184,7 +184,7 @@ export default function AdminWorkoutsPage() {
                     <button onClick={() => moveExercise(i, 1)} disabled={i === form.exercises.length - 1}
                       className="text-gray-500 hover:text-white disabled:opacity-30 text-xs">↓</button>
                     <button onClick={() => removeExercise(i)}
-                      className="text-gray-500 hover:text-red-400 text-xs ml-2">✕</button>
+                      className="text-gray-500 hover:text-red-400 text-xs ml-2"><svg className="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">

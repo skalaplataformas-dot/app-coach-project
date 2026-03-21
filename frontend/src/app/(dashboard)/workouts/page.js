@@ -13,15 +13,15 @@ const DAY_NAMES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 const MUSCLE_GROUPS = [
   { key: 'all', label: 'Todos' },
-  { key: 'pecho_triceps', label: 'Pecho y Tríceps', icon: '💪' },
-  { key: 'pecho_hombros_triceps', label: 'Push (Pecho/Hombros/Tríceps)', icon: '🏋️' },
-  { key: 'espalda_biceps', label: 'Espalda y Bíceps', icon: '🔙' },
-  { key: 'hombros', label: 'Hombros', icon: '🤸' },
-  { key: 'piernas', label: 'Piernas', icon: '🦵' },
-  { key: 'abdominales', label: 'Abdominales', icon: '🎯' },
-  { key: 'full_body', label: 'Full Body', icon: '⚡' },
-  { key: 'cardio', label: 'Cardio / HIIT', icon: '❤️' },
-  { key: 'flexibilidad', label: 'Flexibilidad', icon: '🧘' },
+  { key: 'pecho_triceps', label: 'Pecho y Triceps' },
+  { key: 'pecho_hombros_triceps', label: 'Push' },
+  { key: 'espalda_biceps', label: 'Espalda y Biceps' },
+  { key: 'hombros', label: 'Hombros' },
+  { key: 'piernas', label: 'Piernas' },
+  { key: 'abdominales', label: 'Abdominales' },
+  { key: 'full_body', label: 'Full Body' },
+  { key: 'cardio', label: 'Cardio / HIIT' },
+  { key: 'flexibilidad', label: 'Flexibilidad' },
 ];
 
 export default function WorkoutsPage() {
@@ -159,8 +159,10 @@ export default function WorkoutsPage() {
         </div>
       ) : (
         <div className="card mb-6 text-center py-8">
-          <div className="text-4xl mb-3">🏖️</div>
-          <h3 className="font-bold text-lg mb-1">Día de descanso</h3>
+          <svg className="w-10 h-10 text-primary mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <h3 className="font-bold text-lg mb-1">Dia de descanso</h3>
           <p className="text-gray-400 text-sm">No tienes entrenamiento asignado para hoy. Aprovecha para recuperarte.</p>
         </div>
       )}
@@ -185,7 +187,7 @@ export default function WorkoutsPage() {
                   <div key={s.id} className={`text-[8px] rounded px-1 py-0.5 mt-0.5 truncate ${
                     s.completed ? 'bg-green-500/20 text-green-400' : 'bg-primary/10 text-primary'
                   }`}>
-                    {s.completed ? '✓' : ''} {s.workouts?.title?.split(' ')[0] || '•'}
+                    {s.completed ? <svg className="w-2.5 h-2.5 inline mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg> : ''} {s.workouts?.title?.split(' ')[0] || '-'}
                   </div>
                 ))
               ) : (
@@ -214,7 +216,7 @@ export default function WorkoutsPage() {
                       : 'bg-dark-600 text-gray-300 hover:bg-dark-500'
                   }`}
                 >
-                  {mg.icon ? `${mg.icon} ` : ''}{mg.label}
+                  {mg.label}
                 </button>
               ))}
             </div>
@@ -230,7 +232,7 @@ export default function WorkoutsPage() {
                 return (
                   <div key={group} className="mb-6">
                     <h3 className="text-sm uppercase tracking-wider text-primary mb-3">
-                      {mgInfo ? `${mgInfo.icon} ${mgInfo.label}` : group}
+                      {mgInfo ? mgInfo.label : group}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {items.map(w => (

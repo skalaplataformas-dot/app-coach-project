@@ -423,10 +423,10 @@ function HealthTab({ profile }) {
         <div className="card">
           <h2 className="text-lg font-bold mb-4">Información Médica</h2>
           <div className="space-y-3">
-            {profile.medical_conditions && <HealthField label="Condiciones médicas" value={profile.medical_conditions} icon="🏥" />}
-            {profile.injuries && <HealthField label="Lesiones" value={profile.injuries} icon="🩹" />}
-            {profile.medications && <HealthField label="Medicamentos" value={profile.medications} icon="💊" />}
-            {profile.allergies && <HealthField label="Alergias" value={profile.allergies} icon="⚠️" />}
+            {profile.medical_conditions && <HealthField label="Condiciones médicas" value={profile.medical_conditions} icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 0H21m-3.75 4.5H21m-3.75 0H21" /></svg>} />}
+            {profile.injuries && <HealthField label="Lesiones" value={profile.injuries} icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>} />}
+            {profile.medications && <HealthField label="Medicamentos" value={profile.medications} icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5" /></svg>} />}
+            {profile.allergies && <HealthField label="Alergias" value={profile.allergies} icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>} />}
           </div>
         </div>
       )}
@@ -620,7 +620,7 @@ function CalendarTab({ userId }) {
                   <div key={s.id} className={`text-[9px] rounded px-1 py-1 mb-1 flex items-center justify-between ${
                     s.completed ? 'bg-green-500/20 text-green-400' : isPast ? 'bg-red-500/10 text-red-400' : 'bg-primary/10 text-primary'
                   }`}>
-                    <span className="truncate">{s.completed ? '✓ ' : ''}{s.workouts?.title?.split('-')[0]?.trim() || 'Entreno'}</span>
+                    <span className="truncate">{s.completed ? <svg className="w-3 h-3 inline mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg> : ''}{s.workouts?.title?.split('-')[0]?.trim() || 'Entreno'}</span>
                     <button onClick={() => handleRemove(s.id)} className="ml-1 text-gray-500 hover:text-red-400 flex-shrink-0">×</button>
                   </div>
                 ))}
@@ -634,8 +634,8 @@ function CalendarTab({ userId }) {
                       {allWorkouts.map(w => <option key={w.id} value={w.id}>{w.title}</option>)}
                     </select>
                     <div className="flex gap-1">
-                      <button onClick={() => handleAssign(dateStr)} className="text-[8px] bg-primary/20 text-primary rounded px-1 py-0.5 flex-1">✓</button>
-                      <button onClick={() => { setAssigning(null); setSelectedWorkout(''); }} className="text-[8px] bg-dark-600 text-gray-400 rounded px-1 py-0.5">✕</button>
+                      <button onClick={() => handleAssign(dateStr)} className="text-[8px] bg-primary/20 text-primary rounded px-1 py-0.5 flex-1"><svg className="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></button>
+                      <button onClick={() => { setAssigning(null); setSelectedWorkout(''); }} className="text-[8px] bg-dark-600 text-gray-400 rounded px-1 py-0.5"><svg className="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                     </div>
                   </div>
                 ) : (
