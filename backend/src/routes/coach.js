@@ -108,7 +108,7 @@ router.get('/users/:userId', requireAuth, adminOnly, async (req, res, next) => {
     // Workout stats
     const { data: logs } = await supabase
       .from('workout_logs')
-      .select('completed_at')
+      .select('completed_at, workout_id')
       .eq('user_id', req.params.userId)
       .order('completed_at', { ascending: false });
 
@@ -127,14 +127,27 @@ router.get('/users/:userId', requireAuth, adminOnly, async (req, res, next) => {
       }
     }
 
+    // Metabolic history (for progress tracking)
+    const { data: metabolicHistory } = await supabase
+      .from('metabolic_results')
+      .select('bmi, avg_body_fat_pct, avg_tdee, muscle_mass_kg, avg_fat_mass_kg, calculated_at')
+      .eq('user_id', req.params.userId)
+      .order('calculated_at', { ascending: true })
+      .limit(20);
+
     res.json({
       profile,
       metabolic: metabolic || null,
       nutrition: nutrition || null,
+      metabolic_history: metabolicHistory || [],
       stats: {
         total_workouts: (logs || []).length,
         week_workouts: weekWorkouts,
         streak,
+        recent_workouts: (logs || []).slice(0, 10).map(l => ({
+          date: l.completed_at,
+          workout_id: l.workout_id,
+        })),
       },
     });
   } catch (err) {
