@@ -64,10 +64,17 @@ export default function AdminWorkoutsPage() {
       .finally(() => setLoading(false));
   };
 
+  const [libraryError, setLibraryError] = useState(false);
   const loadLibrary = () => {
+    setLibraryError(false);
     apiFetch('/api/coach/exercises')
-      .then(setExerciseLibrary)
-      .catch(() => {});
+      .then(data => {
+        setExerciseLibrary(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        setLibraryError(true);
+        setExerciseLibrary([]);
+      });
   };
 
   useEffect(() => { loadWorkouts(); loadLibrary(); }, []);
@@ -263,10 +270,14 @@ export default function AdminWorkoutsPage() {
 
             {/* Exercise list */}
             <div className="max-h-[400px] overflow-y-auto space-y-1 pr-1">
-              {filteredLibrary.length === 0 ? (
+              {libraryError ? (
+                <p className="text-xs text-red-400 text-center py-4">
+                  Error al cargar la biblioteca. Recarga la pagina.
+                </p>
+              ) : filteredLibrary.length === 0 ? (
                 <p className="text-xs text-gray-600 text-center py-4">
                   {exerciseLibrary.length === 0
-                    ? 'No hay ejercicios en la biblioteca. Crea ejercicios nuevos abajo.'
+                    ? 'No hay ejercicios en la biblioteca. Crea un entrenamiento con ejercicios nuevos para poblar la biblioteca.'
                     : 'No hay ejercicios en este grupo muscular.'}
                 </p>
               ) : (

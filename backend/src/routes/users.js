@@ -68,6 +68,29 @@ router.put('/me', requireAuth, ...validateProfile, async (req, res, next) => {
     }
     updates.updated_at = new Date().toISOString();
 
+    // Auto-assign coach if completing onboarding and no coach assigned
+    if (updates.onboarding_completed === true) {
+      const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('coach_id')
+        .eq('id', req.user.id)
+        .single();
+
+      if (!currentProfile?.coach_id) {
+        // Find the first admin user as default coach
+        const { data: adminUser } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('role', 'admin')
+          .limit(1)
+          .single();
+
+        if (adminUser) {
+          updates.coach_id = adminUser.id;
+        }
+      }
+    }
+
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
