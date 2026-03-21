@@ -426,4 +426,29 @@ router.get('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
   }
 });
 
+// GET /api/coach/exercises — list unique exercises as a library
+router.get('/exercises', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('exercises')
+      .select('name, sets, reps, rest_seconds, notes, muscle_group, video_url')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+
+    // Deduplicate by name, keep the most complete version
+    const seen = new Map();
+    (data || []).forEach(ex => {
+      const key = ex.name.toLowerCase().trim();
+      if (!seen.has(key) || (ex.video_url && !seen.get(key).video_url)) {
+        seen.set(key, ex);
+      }
+    });
+
+    res.json(Array.from(seen.values()));
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
