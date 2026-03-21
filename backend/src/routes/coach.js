@@ -483,6 +483,47 @@ router.post('/unassign', requireAuth, adminOnly, async (req, res, next) => {
   }
 });
 
+// POST /api/coach/promote — promote a user to coach/admin role
+router.post('/promote', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { user_id } = req.body;
+    if (!user_id) return res.status(400).json({ error: 'user_id es requerido' });
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ role: 'admin', coach_id: null })
+      .eq('id', user_id)
+      .select('id, full_name, role')
+      .single();
+
+    if (error) throw error;
+    res.json({ success: true, user: data });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/coach/demote — demote a coach back to user role
+router.post('/demote', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { user_id } = req.body;
+    if (!user_id) return res.status(400).json({ error: 'user_id es requerido' });
+    if (user_id === req.user.id) return res.status(400).json({ error: 'No puedes degradarte a ti mismo' });
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ role: 'user' })
+      .eq('id', user_id)
+      .select('id, full_name, role')
+      .single();
+
+    if (error) throw error;
+    res.json({ success: true, user: data });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/coach/exercises — list unique exercises as a library
 router.get('/exercises', requireAuth, adminOnly, async (req, res, next) => {
   try {
