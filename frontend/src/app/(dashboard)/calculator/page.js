@@ -1,18 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { calculateMetabolicData } from '@/lib/metabolic-math';
+import { useUser } from '@/hooks/useUser';
 
 export default function CalculatorPage() {
+  const { user, loading: userLoading } = useUser();
+  const router = useRouter();
   const [data, setData] = useState({
     weight: 70, height: 170, age: 30, sex: 'M', activityLevel: 3,
     neck: 38, waist: 80, hip: 90,
   });
   const [results, setResults] = useState(null);
 
+  // Redirect non-admin users
+  useEffect(() => {
+    if (!userLoading && user && user.role !== 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user, userLoading, router]);
+
   useEffect(() => {
     setResults(calculateMetabolicData(data));
   }, [data]);
+
+  if (userLoading) return <div className="flex items-center justify-center h-64"><div className="text-gray-400">Cargando...</div></div>;
+  if (user?.role !== 'admin') return null;
 
   const update = (field, value) => {
     setData(prev => ({ ...prev, [field]: value }));
