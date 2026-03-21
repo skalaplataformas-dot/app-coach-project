@@ -73,6 +73,7 @@ export default function CoachUserDetailPage() {
 
   const tabs = [
     { id: 'general', label: 'General' },
+    { id: 'calendar', label: 'Calendario' },
     { id: 'nutrition', label: 'Nutrición' },
     { id: 'progress', label: 'Progreso' },
     { id: 'health', label: 'Salud' },
@@ -135,6 +136,9 @@ export default function CoachUserDetailPage() {
         <GeneralTab profile={profile} metabolic={metabolic} stats={stats}
           getValue={getValue} handleEdit={handleEdit} handleSave={handleSave}
           hasEdits={hasEdits} saving={saving} />
+      )}
+      {activeTab === 'calendar' && (
+        <CalendarTab userId={userId} />
       )}
       {activeTab === 'nutrition' && (
         <NutritionTab nutrition={nutrition} />
@@ -480,6 +484,171 @@ function MiniStat({ label, value, color }) {
     <div className="text-center px-3">
       <div className={`text-sm font-bold ${color}`}>{value}</div>
       <div className="text-[9px] text-gray-500">{label}</div>
+    </div>
+  );
+}
+
+// ─── Calendar Tab (Coach assigns workouts) ──────────────────────────────
+function CalendarTab({ userId }) {
+  const toast = useToast();
+  const [schedule, setSchedule] = useState([]);
+  const [allWorkouts, setAllWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [assigning, setAssigning] = useState(null); // dateStr being assigned
+  const [selectedWorkout, setSelectedWorkout] = useState('');
+
+  const getWeekDates = (offset) => {
+    const today = new Date();
+    const base = new Date(today);
+    base.setDate(today.getDate() + offset * 7);
+    const day = base.getDay();
+    const monday = new Date(base);
+    monday.setDate(base.getDate() - (day === 0 ? 6 : day - 1));
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return d;
+    });
+  };
+
+  const weekDays = getWeekDates(weekOffset);
+  const startDate = weekDays[0].toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split('T')[0];
+  const DAY_NAMES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      apiFetch(`/api/coach/users/${userId}/schedule?date=${startDate}`),
+      allWorkouts.length === 0 ? apiFetch('/api/workouts') : Promise.resolve(allWorkouts),
+    ]).then(([sched, wk]) => {
+      setSchedule(sched);
+      if (wk !== allWorkouts) setAllWorkouts(wk);
+    }).catch(() => toast.error('Error al cargar calendario'))
+      .finally(() => setLoading(false));
+  }, [userId, weekOffset]);
+
+  const handleAssign = async (dateStr) => {
+    if (!selectedWorkout) return;
+    try {
+      await apiFetch(`/api/coach/users/${userId}/schedule`, {
+        method: 'POST',
+        body: { workout_id: selectedWorkout, scheduled_date: dateStr },
+      });
+      toast.success('Entrenamiento asignado');
+      setAssigning(null);
+      setSelectedWorkout('');
+      // Refresh
+      const sched = await apiFetch(`/api/coach/users/${userId}/schedule?date=${startDate}`);
+      setSchedule(sched);
+    } catch (err) {
+      toast.error(err.message || 'Error al asignar');
+    }
+  };
+
+  const handleRemove = async (scheduleId) => {
+    try {
+      await apiFetch(`/api/coach/users/${userId}/schedule/${scheduleId}`, { method: 'DELETE' });
+      setSchedule(prev => prev.filter(s => s.id !== scheduleId));
+      toast.success('Entrenamiento removido');
+    } catch {
+      toast.error('Error al eliminar');
+    }
+  };
+
+  if (loading) return <div className="text-gray-400 text-center py-8">Cargando calendario...</div>;
+
+  // Calculate compliance
+  const pastDays = weekDays.filter(d => d.toISOString().split('T')[0] <= todayStr);
+  const scheduledPast = schedule.filter(s => s.scheduled_date <= todayStr);
+  const completedPast = scheduledPast.filter(s => s.completed);
+  const compliance = scheduledPast.length > 0 ? Math.round(completedPast.length / scheduledPast.length * 100) : null;
+
+  return (
+    <div className="space-y-4">
+      {/* Week navigation + compliance */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setWeekOffset(w => w - 1)} className="text-gray-400 hover:text-white p-1">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <div className="text-center">
+            <span className="font-bold text-sm">
+              {weekDays[0].toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })} — {weekDays[6].toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}
+            </span>
+            {weekOffset !== 0 && (
+              <button onClick={() => setWeekOffset(0)} className="ml-2 text-xs text-primary hover:underline">Hoy</button>
+            )}
+          </div>
+          <button onClick={() => setWeekOffset(w => w + 1)} className="text-gray-400 hover:text-white p-1">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+
+        {compliance !== null && (
+          <div className="flex items-center gap-3 mb-4 p-3 bg-dark-700/50 rounded-xl">
+            <div className={`text-2xl font-bold ${compliance >= 80 ? 'text-green-400' : compliance >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+              {compliance}%
+            </div>
+            <div className="text-xs text-gray-400">
+              Cumplimiento: {completedPast.length}/{scheduledPast.length} entrenamientos completados
+            </div>
+          </div>
+        )}
+
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-2">
+          {weekDays.map((day, i) => {
+            const dateStr = day.toISOString().split('T')[0];
+            const daySchedule = schedule.filter(s => s.scheduled_date === dateStr);
+            const isToday = dateStr === todayStr;
+            const isPast = dateStr < todayStr;
+
+            return (
+              <div key={dateStr} className={`rounded-xl p-2 min-h-[100px] ${
+                isToday ? 'bg-primary/10 border border-primary/30' : 'bg-dark-700/50'
+              }`}>
+                <div className={`text-[10px] uppercase text-center ${isToday ? 'text-primary font-bold' : 'text-gray-500'}`}>
+                  {DAY_NAMES[i]}
+                </div>
+                <div className={`text-sm font-bold text-center mb-2 ${isToday ? 'text-white' : 'text-gray-300'}`}>
+                  {day.getDate()}
+                </div>
+
+                {daySchedule.map(s => (
+                  <div key={s.id} className={`text-[9px] rounded px-1 py-1 mb-1 flex items-center justify-between ${
+                    s.completed ? 'bg-green-500/20 text-green-400' : isPast ? 'bg-red-500/10 text-red-400' : 'bg-primary/10 text-primary'
+                  }`}>
+                    <span className="truncate">{s.completed ? '✓ ' : ''}{s.workouts?.title?.split('-')[0]?.trim() || 'Entreno'}</span>
+                    <button onClick={() => handleRemove(s.id)} className="ml-1 text-gray-500 hover:text-red-400 flex-shrink-0">×</button>
+                  </div>
+                ))}
+
+                {/* Add button */}
+                {assigning === dateStr ? (
+                  <div className="mt-1">
+                    <select value={selectedWorkout} onChange={e => setSelectedWorkout(e.target.value)}
+                      className="w-full text-[9px] bg-dark-600 text-white rounded p-1 mb-1">
+                      <option value="">Seleccionar...</option>
+                      {allWorkouts.map(w => <option key={w.id} value={w.id}>{w.title}</option>)}
+                    </select>
+                    <div className="flex gap-1">
+                      <button onClick={() => handleAssign(dateStr)} className="text-[8px] bg-primary/20 text-primary rounded px-1 py-0.5 flex-1">✓</button>
+                      <button onClick={() => { setAssigning(null); setSelectedWorkout(''); }} className="text-[8px] bg-dark-600 text-gray-400 rounded px-1 py-0.5">✕</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => setAssigning(dateStr)}
+                    className="w-full text-[9px] text-gray-600 hover:text-primary mt-1 border border-dashed border-dark-500 rounded py-0.5">
+                    + Asignar
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

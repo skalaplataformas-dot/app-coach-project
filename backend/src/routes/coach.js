@@ -189,4 +189,88 @@ router.put('/users/:userId', requireAuth, adminOnly, async (req, res, next) => {
   }
 });
 
+// ─── SCHEDULE MANAGEMENT ────────────────────────────────────────────────
+
+// GET /api/coach/users/:userId/schedule?date=2026-03-20 — get user's weekly schedule
+router.get('/users/:userId/schedule', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const baseDate = req.query.date ? new Date(req.query.date) : new Date();
+    const day = baseDate.getDay();
+    const monday = new Date(baseDate);
+    monday.setDate(baseDate.getDate() - (day === 0 ? 6 : day - 1));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const startDate = monday.toISOString().split('T')[0];
+    const endDate = sunday.toISOString().split('T')[0];
+
+    const { data, error } = await supabase
+      .from('workout_schedule')
+      .select('*, workouts(id, title, category, difficulty, duration_minutes)')
+      .eq('user_id', req.params.userId)
+      .gte('scheduled_date', startDate)
+      .lte('scheduled_date', endDate)
+      .order('scheduled_date', { ascending: true });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/coach/users/:userId/schedule — assign workout to a date
+router.post('/users/:userId/schedule', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { workout_id, scheduled_date } = req.body;
+    if (!workout_id || !scheduled_date) {
+      return res.status(400).json({ error: 'workout_id y scheduled_date son requeridos' });
+    }
+
+    // Verify user belongs to this coach
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', req.params.userId)
+      .eq('coach_id', req.user.id)
+      .single();
+
+    if (!profile) return res.status(404).json({ error: 'Usuario no asignado a este coach' });
+
+    const { data, error } = await supabase
+      .from('workout_schedule')
+      .insert({
+        user_id: req.params.userId,
+        workout_id,
+        scheduled_date,
+      })
+      .select('*, workouts(id, title, category, difficulty, duration_minutes)')
+      .single();
+
+    if (error) {
+      if (error.code === '23505') return res.status(409).json({ error: 'Ya existe ese entrenamiento en esa fecha' });
+      throw error;
+    }
+    res.status(201).json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/coach/users/:userId/schedule/:scheduleId — remove scheduled workout
+router.delete('/users/:userId/schedule/:scheduleId', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { error } = await supabase
+      .from('workout_schedule')
+      .delete()
+      .eq('id', req.params.scheduleId)
+      .eq('user_id', req.params.userId);
+
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
