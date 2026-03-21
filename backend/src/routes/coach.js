@@ -278,13 +278,13 @@ router.delete('/users/:userId/schedule/:scheduleId', requireAuth, adminOnly, asy
 // POST /api/coach/workouts — create a workout template
 router.post('/workouts', requireAuth, adminOnly, async (req, res, next) => {
   try {
-    const { title, description, difficulty, duration_minutes, category, exercises } = req.body;
+    const { title, description, difficulty, duration_minutes, category, muscle_group, exercises } = req.body;
     if (!title) return res.status(400).json({ error: 'Título es requerido' });
 
     // Create workout
     const { data: workout, error } = await supabase
       .from('workouts')
-      .insert({ title, description, difficulty: difficulty || 'intermediate', duration_minutes: duration_minutes || 45, category: category || 'strength' })
+      .insert({ title, description, difficulty: difficulty || 'intermediate', duration_minutes: duration_minutes || 45, category: category || 'strength', muscle_group: muscle_group || null })
       .select()
       .single();
 
@@ -324,13 +324,14 @@ router.post('/workouts', requireAuth, adminOnly, async (req, res, next) => {
 // PUT /api/coach/workouts/:id — update a workout template
 router.put('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
   try {
-    const { title, description, difficulty, duration_minutes, category } = req.body;
+    const { title, description, difficulty, duration_minutes, category, muscle_group } = req.body;
     const updates = {};
     if (title !== undefined) updates.title = title;
     if (description !== undefined) updates.description = description;
     if (difficulty !== undefined) updates.difficulty = difficulty;
     if (duration_minutes !== undefined) updates.duration_minutes = duration_minutes;
     if (category !== undefined) updates.category = category;
+    if (muscle_group !== undefined) updates.muscle_group = muscle_group || null;
 
     if (Object.keys(updates).length > 0) {
       const { error } = await supabase.from('workouts').update(updates).eq('id', req.params.id);

@@ -11,6 +11,19 @@ const CATEGORIES = [
   { value: 'flexibility', label: 'Flexibilidad' },
 ];
 
+const MUSCLE_GROUPS = [
+  { value: '', label: 'Seleccionar grupo muscular' },
+  { value: 'pecho_triceps', label: 'Pecho y Triceps' },
+  { value: 'pecho_hombros_triceps', label: 'Push (Pecho/Hombros/Triceps)' },
+  { value: 'espalda_biceps', label: 'Espalda y Biceps' },
+  { value: 'hombros', label: 'Hombros' },
+  { value: 'piernas', label: 'Piernas' },
+  { value: 'abdominales', label: 'Abdominales' },
+  { value: 'full_body', label: 'Full Body' },
+  { value: 'cardio', label: 'Cardio / HIIT' },
+  { value: 'flexibilidad', label: 'Flexibilidad' },
+];
+
 const DIFFICULTIES = [
   { value: 'beginner', label: 'Principiante' },
   { value: 'intermediate', label: 'Intermedio' },
@@ -26,7 +39,7 @@ export default function AdminWorkoutsPage() {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // null=list, 'new'=create, workoutId=edit
-  const [form, setForm] = useState({ title: '', description: '', difficulty: 'intermediate', duration_minutes: 45, category: 'strength', exercises: [] });
+  const [form, setForm] = useState({ title: '', description: '', difficulty: 'intermediate', duration_minutes: 45, category: 'strength', muscle_group: '', exercises: [] });
   const [saving, setSaving] = useState(false);
 
   const loadWorkouts = () => {
@@ -40,7 +53,7 @@ export default function AdminWorkoutsPage() {
   useEffect(() => { loadWorkouts(); }, []);
 
   const startNew = () => {
-    setForm({ title: '', description: '', difficulty: 'intermediate', duration_minutes: 45, category: 'strength', exercises: [{ ...EMPTY_EXERCISE }] });
+    setForm({ title: '', description: '', difficulty: 'intermediate', duration_minutes: 45, category: 'strength', muscle_group: '', exercises: [{ ...EMPTY_EXERCISE }] });
     setEditing('new');
   };
 
@@ -53,6 +66,7 @@ export default function AdminWorkoutsPage() {
         difficulty: data.difficulty,
         duration_minutes: data.duration_minutes,
         category: data.category,
+        muscle_group: data.muscle_group || '',
         exercises: data.exercises?.length > 0 ? data.exercises.map(e => ({
           name: e.name, sets: e.sets, reps: e.reps, rest_seconds: e.rest_seconds,
           notes: e.notes || '', muscle_group: e.muscle_group || '',
@@ -153,13 +167,19 @@ export default function AdminWorkoutsPage() {
               </select>
             </div>
             <div>
+              <label className="text-xs text-gray-500 block mb-1">Grupo Muscular</label>
+              <select value={form.muscle_group} onChange={e => setForm(f => ({ ...f, muscle_group: e.target.value }))} className="input-field w-full">
+                {MUSCLE_GROUPS.map(mg => <option key={mg.value} value={mg.value}>{mg.label}</option>)}
+              </select>
+            </div>
+            <div>
               <label className="text-xs text-gray-500 block mb-1">Dificultad</label>
               <select value={form.difficulty} onChange={e => setForm(f => ({ ...f, difficulty: e.target.value }))} className="input-field w-full">
                 {DIFFICULTIES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Duración (min)</label>
+              <label className="text-xs text-gray-500 block mb-1">Duracion (min)</label>
               <input type="number" value={form.duration_minutes} onChange={e => setForm(f => ({ ...f, duration_minutes: Number(e.target.value) }))}
                 className="input-field w-full" min={5} max={180} />
             </div>
@@ -250,6 +270,7 @@ export default function AdminWorkoutsPage() {
                     <span className={`text-xs ${DIFF_COLORS[w.difficulty]}`}>{DIFFICULTIES.find(d => d.value === w.difficulty)?.label}</span>
                   </div>
                   <div className="flex gap-3 text-xs text-gray-500 mt-1">
+                    {w.muscle_group && <span className="text-primary">{MUSCLE_GROUPS.find(mg => mg.value === w.muscle_group)?.label || w.muscle_group}</span>}
                     <span>{CATEGORIES.find(c => c.value === w.category)?.label}</span>
                     <span>{w.duration_minutes} min</span>
                     <span>{w.exercise_count} ejercicios</span>
