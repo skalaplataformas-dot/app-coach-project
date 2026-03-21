@@ -140,9 +140,16 @@ export default function WorkoutDetailPage() {
 
 function ExerciseCard({ exercise, index, expanded, onToggle }) {
   const [gifError, setGifError] = useState(false);
+  const [gifLoaded, setGifLoaded] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
   const mc = MUSCLE_COLORS[exercise.muscle_group] || MUSCLE_COLORS.cardio;
   const muscleLabel = MUSCLE_LABELS[exercise.muscle_group] || exercise.muscle_group_label || '';
   const hasMedia = exercise.gif_url && !gifError;
+
+  // Only start loading GIF when expanded for the first time
+  useEffect(() => {
+    if (expanded && !shouldLoad) setShouldLoad(true);
+  }, [expanded]);
 
   return (
     <div className={`rounded-2xl border transition-all overflow-hidden ${
@@ -187,14 +194,21 @@ function ExerciseCard({ exercise, index, expanded, onToggle }) {
       {/* Expanded */}
       {expanded && (
         <div className="px-4 pb-4 space-y-4">
-          {/* GIF */}
-          {exercise.gif_url && !gifError && (
-            <div className="rounded-xl overflow-hidden bg-black border border-dark-500">
+          {/* GIF - only loads when expanded */}
+          {hasMedia && shouldLoad && (
+            <div className="rounded-xl overflow-hidden bg-dark-700 border border-dark-500 relative">
+              {!gifLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                </div>
+              )}
               <img
                 src={exercise.gif_url}
                 alt={exercise.name}
-                className="w-full aspect-[4/3] object-contain"
+                className={`w-full aspect-[4/3] object-contain transition-opacity duration-300 ${gifLoaded ? 'opacity-100' : 'opacity-0'}`}
                 loading="lazy"
+                decoding="async"
+                onLoad={() => setGifLoaded(true)}
                 onError={() => setGifError(true)}
               />
             </div>
