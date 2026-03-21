@@ -273,4 +273,156 @@ router.delete('/users/:userId/schedule/:scheduleId', requireAuth, adminOnly, asy
   }
 });
 
+// ─── WORKOUT TEMPLATE MANAGEMENT ────────────────────────────────────────
+
+// POST /api/coach/workouts — create a workout template
+router.post('/workouts', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { title, description, difficulty, duration_minutes, category, exercises } = req.body;
+    if (!title) return res.status(400).json({ error: 'Título es requerido' });
+
+    // Create workout
+    const { data: workout, error } = await supabase
+      .from('workouts')
+      .insert({ title, description, difficulty: difficulty || 'intermediate', duration_minutes: duration_minutes || 45, category: category || 'strength' })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Create exercises if provided
+    if (exercises?.length > 0) {
+      const exerciseRows = exercises.map((ex, i) => ({
+        workout_id: workout.id,
+        name: ex.name,
+        sets: ex.sets || 3,
+        reps: ex.reps || '12',
+        rest_seconds: ex.rest_seconds || 60,
+        sort_order: ex.sort_order || i + 1,
+        notes: ex.notes || null,
+        muscle_group: ex.muscle_group || null,
+        video_url: ex.video_url || null,
+      }));
+
+      const { error: exError } = await supabase.from('exercises').insert(exerciseRows);
+      if (exError) throw exError;
+    }
+
+    // Return workout with exercises
+    const { data: full } = await supabase
+      .from('workouts')
+      .select('*, exercises(*)')
+      .eq('id', workout.id)
+      .single();
+
+    res.status(201).json(full);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /api/coach/workouts/:id — update a workout template
+router.put('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { title, description, difficulty, duration_minutes, category } = req.body;
+    const updates = {};
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+    if (difficulty !== undefined) updates.difficulty = difficulty;
+    if (duration_minutes !== undefined) updates.duration_minutes = duration_minutes;
+    if (category !== undefined) updates.category = category;
+
+    if (Object.keys(updates).length > 0) {
+      const { error } = await supabase.from('workouts').update(updates).eq('id', req.params.id);
+      if (error) throw error;
+    }
+
+    // Update exercises if provided
+    if (req.body.exercises) {
+      // Delete old exercises
+      await supabase.from('exercises').delete().eq('workout_id', req.params.id);
+
+      // Insert new ones
+      if (req.body.exercises.length > 0) {
+        const exerciseRows = req.body.exercises.map((ex, i) => ({
+          workout_id: req.params.id,
+          name: ex.name,
+          sets: ex.sets || 3,
+          reps: ex.reps || '12',
+          rest_seconds: ex.rest_seconds || 60,
+          sort_order: ex.sort_order || i + 1,
+          notes: ex.notes || null,
+          muscle_group: ex.muscle_group || null,
+          video_url: ex.video_url || null,
+        }));
+
+        const { error: exError } = await supabase.from('exercises').insert(exerciseRows);
+        if (exError) throw exError;
+      }
+    }
+
+    const { data: full } = await supabase
+      .from('workouts')
+      .select('*, exercises(*)')
+      .eq('id', req.params.id)
+      .order('sort_order', { referencedTable: 'exercises', ascending: true })
+      .single();
+
+    res.json(full);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/coach/workouts/:id — delete a workout template
+router.delete('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    // Exercises cascade delete via FK
+    const { error } = await supabase.from('workouts').delete().eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/coach/workouts — list all workouts with exercise count
+router.get('/workouts', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('workouts')
+      .select('*, exercises(id)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const result = (data || []).map(w => ({
+      ...w,
+      exercise_count: w.exercises?.length || 0,
+      exercises: undefined,
+    }));
+
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/coach/workouts/:id — get workout with full exercises
+router.get('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('workouts')
+      .select('*, exercises(*)')
+      .eq('id', req.params.id)
+      .order('sort_order', { referencedTable: 'exercises', ascending: true })
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

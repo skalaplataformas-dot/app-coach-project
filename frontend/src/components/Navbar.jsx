@@ -14,6 +14,7 @@ const PAGE_NAMES = {
   '/admin/coach': 'Asesorados',
   '/admin/feed': 'Gestión de Mensajes',
   '/admin/foods': 'Gestión de Alimentos',
+  '/admin/workouts': 'Gestión de Entrenamientos',
   '/admin/system': 'Panel de Sistema',
   '/admin/onboarding': 'Configuración de Onboarding',
 };
