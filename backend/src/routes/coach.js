@@ -10,7 +10,8 @@ router.get('/users', requireAuth, adminOnly, async (req, res, next) => {
   try {
     const { data: users, error } = await supabase
       .from('profiles')
-      .select('id, full_name, sex, age, goal, weight_kg, target_weight_kg, height_cm, body_type, activity_level, onboarding_completed, created_at, updated_at, last_active_at, deactivated_at')
+      .select('id, full_name, sex, age, goal, weight_kg, target_weight_kg, height_cm, body_type, activity_level, onboarding_completed, created_at, updated_at, last_active_at, deactivated_at, coach_id')
+      .eq('coach_id', req.user.id)
       .neq('role', 'admin')
       .is('deactivated_at', null)
       .order('created_at', { ascending: false });
@@ -74,15 +75,16 @@ router.get('/users', requireAuth, adminOnly, async (req, res, next) => {
 // GET /api/coach/users/:userId — full detail of a specific user
 router.get('/users/:userId', requireAuth, adminOnly, async (req, res, next) => {
   try {
-    // Profile
+    // Profile — only if assigned to this coach
     const { data: profile, error: profileErr } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', req.params.userId)
+      .eq('coach_id', req.user.id)
       .single();
 
     if (profileErr || !profile) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      return res.status(404).json({ error: 'Usuario no encontrado o no asignado a este coach' });
     }
 
     // Latest metabolic result
@@ -156,15 +158,17 @@ router.put('/users/:userId', requireAuth, adminOnly, async (req, res, next) => {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }
 
+    // Only allow editing users assigned to this coach
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
       .eq('id', req.params.userId)
+      .eq('coach_id', req.user.id)
       .select()
       .single();
 
     if (error) throw error;
-    if (!data) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!data) return res.status(404).json({ error: 'Usuario no encontrado o no asignado a este coach' });
 
     res.json(data);
   } catch (err) {
