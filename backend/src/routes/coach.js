@@ -426,6 +426,63 @@ router.get('/workouts/:id', requireAuth, adminOnly, async (req, res, next) => {
   }
 });
 
+// GET /api/coach/unassigned — list users without a coach
+router.get('/unassigned', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, sex, age, goal, weight_kg, onboarding_completed, created_at')
+      .neq('role', 'admin')
+      .is('coach_id', null)
+      .is('deactivated_at', null)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/coach/assign — assign user(s) to this coach
+router.post('/assign', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { user_ids } = req.body;
+    if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0) {
+      return res.status(400).json({ error: 'user_ids es requerido' });
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ coach_id: req.user.id })
+      .in('id', user_ids);
+
+    if (error) throw error;
+    res.json({ success: true, assigned: user_ids.length });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/coach/unassign — remove user from this coach
+router.post('/unassign', requireAuth, adminOnly, async (req, res, next) => {
+  try {
+    const { user_id } = req.body;
+    if (!user_id) return res.status(400).json({ error: 'user_id es requerido' });
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ coach_id: null })
+      .eq('id', user_id)
+      .eq('coach_id', req.user.id);
+
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/coach/exercises — list unique exercises as a library
 router.get('/exercises', requireAuth, adminOnly, async (req, res, next) => {
   try {
