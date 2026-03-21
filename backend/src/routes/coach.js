@@ -488,7 +488,7 @@ router.get('/exercises', requireAuth, adminOnly, async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from('exercises')
-      .select('name, sets, reps, rest_seconds, notes, muscle_group, video_url')
+      .select('name, sets, reps, rest_seconds, notes, muscle_group')
       .order('name', { ascending: true });
 
     if (error) throw error;
@@ -497,7 +497,7 @@ router.get('/exercises', requireAuth, adminOnly, async (req, res, next) => {
     const seen = new Map();
     (data || []).forEach(ex => {
       const key = ex.name.toLowerCase().trim();
-      if (!seen.has(key) || (ex.video_url && !seen.get(key).video_url)) {
+      if (!seen.has(key) || (ex.muscle_group && !seen.get(key).muscle_group)) {
         seen.set(key, ex);
       }
     });
