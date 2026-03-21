@@ -9,6 +9,7 @@ const PAGE_NAMES = {
   '/calculator': 'Calculadora Metabólica',
   '/nutrition': 'Plan Nutricional',
   '/workouts': 'Entrenamientos',
+  '/progress': 'Mi Progreso',
   '/feed': 'Muro',
   '/profile': 'Mi Perfil',
   '/admin/coach': 'Asesorados',

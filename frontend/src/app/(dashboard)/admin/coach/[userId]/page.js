@@ -144,7 +144,7 @@ export default function CoachUserDetailPage() {
         <NutritionTab nutrition={nutrition} />
       )}
       {activeTab === 'progress' && (
-        <ProgressTab profile={profile} metabolicHistory={metabolic_history} stats={stats} />
+        <ProgressTab profile={profile} metabolicHistory={metabolic_history} stats={stats} userId={userId} />
       )}
       {activeTab === 'health' && (
         <HealthTab profile={profile} />
@@ -308,10 +308,28 @@ function NutritionTab({ nutrition }) {
 }
 
 // ─── Progress Tab ───────────────────────────────────────────────────────
-function ProgressTab({ profile, metabolicHistory, stats }) {
+function ProgressTab({ profile, metabolicHistory, stats, userId }) {
+  const [progressEntries, setProgressEntries] = useState([]);
+  const [loadingProgress, setLoadingProgress] = useState(true);
+
+  useEffect(() => {
+    if (userId) {
+      apiFetch(`/api/progress/user/${userId}`)
+        .then(setProgressEntries)
+        .catch(() => setProgressEntries([]))
+        .finally(() => setLoadingProgress(false));
+    }
+  }, [userId]);
+
   const hasHistory = metabolicHistory && metabolicHistory.length > 0;
   const weightDiff = profile.weight_kg && profile.target_weight_kg
     ? (profile.weight_kg - profile.target_weight_kg).toFixed(1)
+    : null;
+
+  const latest = progressEntries[0];
+  const first = progressEntries[progressEntries.length - 1];
+  const totalWeightChange = latest?.weight_kg && first?.weight_kg && progressEntries.length > 1
+    ? (latest.weight_kg - first.weight_kg).toFixed(1)
     : null;
 
   return (
@@ -319,11 +337,13 @@ function ProgressTab({ profile, metabolicHistory, stats }) {
       {/* Weight Progress */}
       <div className="card">
         <h2 className="text-lg font-bold mb-4">Progreso de Peso</h2>
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <StatBox label="Peso actual" value={`${profile.weight_kg || '?'} kg`} color="text-white" />
           <StatBox label="Peso objetivo" value={`${profile.target_weight_kg || '?'} kg`} color="text-primary" />
-          <StatBox label="Diferencia" value={weightDiff ? `${weightDiff > 0 ? '-' : '+'}${Math.abs(weightDiff)} kg` : '?'}
+          <StatBox label="Falta" value={weightDiff ? `${Math.abs(weightDiff)} kg` : '?'}
             color={weightDiff > 0 ? 'text-orange-400' : 'text-green-400'} />
+          <StatBox label="Cambio total" value={totalWeightChange ? `${Number(totalWeightChange) > 0 ? '+' : ''}${totalWeightChange} kg` : '-'}
+            color={totalWeightChange && Number(totalWeightChange) < 0 ? 'text-green-400' : 'text-orange-400'} />
         </div>
         {weightDiff && (
           <div className="relative h-3 bg-dark-600 rounded-full overflow-hidden">
@@ -333,10 +353,58 @@ function ProgressTab({ profile, metabolicHistory, stats }) {
         )}
       </div>
 
+      {/* Progress Entries Timeline */}
+      {loadingProgress ? (
+        <div className="card text-center py-6 text-gray-400 text-sm">Cargando historial de progreso...</div>
+      ) : progressEntries.length > 0 ? (
+        <div className="card">
+          <h2 className="text-lg font-bold mb-4">Historial de Mediciones ({progressEntries.length} registros)</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-gray-500 text-xs border-b border-dark-600">
+                  <th className="text-left py-2 font-medium">Fecha</th>
+                  <th className="text-center py-2 font-medium">Peso</th>
+                  <th className="text-center py-2 font-medium">Cuello</th>
+                  <th className="text-center py-2 font-medium">Cintura</th>
+                  <th className="text-center py-2 font-medium">Cadera</th>
+                  <th className="text-center py-2 font-medium">Pecho</th>
+                  <th className="text-center py-2 font-medium">Brazo</th>
+                  <th className="text-center py-2 font-medium">Muslo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {progressEntries.map((e, i) => {
+                  const prev = progressEntries[i + 1];
+                  return (
+                    <tr key={e.id} className="border-b border-dark-700 last:border-0">
+                      <td className="py-2 text-gray-300 text-xs">
+                        {new Date(e.recorded_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}
+                      </td>
+                      <ProgressCell value={e.weight_kg} prev={prev?.weight_kg} />
+                      <ProgressCell value={e.neck_cm} prev={prev?.neck_cm} />
+                      <ProgressCell value={e.waist_cm} prev={prev?.waist_cm} />
+                      <ProgressCell value={e.hip_cm} prev={prev?.hip_cm} />
+                      <ProgressCell value={e.chest_cm} prev={prev?.chest_cm} />
+                      <ProgressCell value={e.arm_cm} prev={prev?.arm_cm} />
+                      <ProgressCell value={e.thigh_cm} prev={prev?.thigh_cm} />
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <div className="card text-center py-6">
+          <p className="text-gray-400 text-sm">El asesorado aun no ha registrado mediciones de progreso</p>
+        </div>
+      )}
+
       {/* Metabolic History */}
       {hasHistory && (
         <div className="card">
-          <h2 className="text-lg font-bold mb-4">Historial Metabólico</h2>
+          <h2 className="text-lg font-bold mb-4">Historial Metabolico</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -351,7 +419,7 @@ function ProgressTab({ profile, metabolicHistory, stats }) {
               <tbody>
                 {metabolicHistory.slice().reverse().map((m, i) => (
                   <tr key={i} className="border-b border-dark-700 last:border-0">
-                    <td className="py-2 text-gray-300">
+                    <td className="py-2 text-gray-300 text-xs">
                       {new Date(m.calculated_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}
                     </td>
                     <td className="py-2 text-center text-primary font-medium">{Math.round(m.avg_tdee)}</td>
@@ -369,26 +437,29 @@ function ProgressTab({ profile, metabolicHistory, stats }) {
       {/* Workout Activity */}
       <div className="card">
         <h2 className="text-lg font-bold mb-4">Actividad de Entrenamientos</h2>
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-3 gap-3">
           <StatBox label="Total" value={stats.total_workouts} color="text-primary" />
-          <StatBox label="Racha" value={`${stats.streak} días`} color="text-orange-400" />
+          <StatBox label="Racha" value={`${stats.streak} dias`} color="text-orange-400" />
           <StatBox label="Esta semana" value={stats.week_workouts} color="text-cyan-400" />
         </div>
-        {stats.recent_workouts?.length > 0 && (
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500 mb-2">Últimas sesiones:</p>
-            {stats.recent_workouts.map((w, i) => (
-              <div key={i} className="flex items-center justify-between py-1.5 text-sm border-b border-dark-700 last:border-0">
-                <span className="text-gray-300">Sesión completada</span>
-                <span className="text-xs text-gray-500">
-                  {new Date(w.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
+  );
+}
+
+function ProgressCell({ value, prev }) {
+  if (!value) return <td className="py-2 text-center text-gray-600">-</td>;
+  const diff = prev ? (value - prev).toFixed(1) : null;
+  const color = diff === null ? 'text-white' :
+    Number(diff) < 0 ? 'text-green-400' :
+    Number(diff) > 0 ? 'text-orange-400' : 'text-gray-400';
+  return (
+    <td className="py-2 text-center">
+      <span className={color}>{value}</span>
+      {diff !== null && Number(diff) !== 0 && (
+        <span className={`text-[10px] ml-0.5 ${color}`}>({Number(diff) > 0 ? '+' : ''}{diff})</span>
+      )}
+    </td>
   );
 }
 
